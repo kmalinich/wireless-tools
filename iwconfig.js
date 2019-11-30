@@ -53,6 +53,32 @@ function freq2channel(freq) {
 		case 2.467 : return 12;
 		case 2.472 : return 13;
 		case 2.484 : return 14;
+
+		case 5.180 : return 36;
+		case 5.200 : return 40;
+		case 5.220 : return 44;
+		case 5.240 : return 48;
+		case 5.260 : return 52;
+		case 5.280 : return 56;
+		case 5.300 : return 60;
+		case 5.320 : return 64;
+		case 5.500 : return 100;
+		case 5.520 : return 104;
+		case 5.540 : return 108;
+		case 5.560 : return 112;
+		case 5.580 : return 116;
+		case 5.600 : return 120;
+		case 5.620 : return 124;
+		case 5.640 : return 128;
+		case 5.660 : return 132;
+		case 5.680 : return 136;
+		case 5.700 : return 140;
+		case 5.720 : return 144;
+		case 5.745 : return 149;
+		case 5.765 : return 153;
+		case 5.785 : return 157;
+		case 5.805 : return 161;
+		case 5.825 : return 165;
 	}
 }
 
