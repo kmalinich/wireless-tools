@@ -35,6 +35,27 @@ module.exports = {
 	status,
 };
 
+
+// Convert WiFi frequency into channel number
+function freq2channel(freq) {
+	switch (freq) {
+		case 2.412 : return 1;
+		case 2.417 : return 2;
+		case 2.422 : return 3;
+		case 2.427 : return 4;
+		case 2.432 : return 5;
+		case 2.437 : return 6;
+		case 2.442 : return 7;
+		case 2.447 : return 8;
+		case 2.452 : return 9;
+		case 2.457 : return 10;
+		case 2.462 : return 11;
+		case 2.467 : return 12;
+		case 2.472 : return 13;
+		case 2.484 : return 14;
+	}
+}
+
 /**
  * Parses the status for a single wireless network interface.
  *
@@ -55,49 +76,20 @@ function parse_status_block(block) {
 		interface : block.match(/^([^\s]+)/)[1],
 	};
 
-	if ((match = block.match(/Access Point:\s*([A-Fa-f0-9:]{17})/))) {
-		parsed.access_point = match[1].toLowerCase();
-	}
+	if ((match = block.match(/Access Point:\s*([A-Fa-f0-9:]{17})/))) parsed.access_point     = match[1].toLowerCase();
+	if ((match = block.match(/Bit Rate[:|=]\s*([0-9.]+)/)))          parsed.bitrate          = parseFloat(match[1]);
+	if ((match = block.match(/Frequency[:|=]\s*([0-9.]+)/)))         parsed.frequency        = parseFloat(match[1]);
+	if ((match = block.match(/IEEE\s*([^\s]+)/)))                    parsed.ieee             = match[1].toLowerCase();
+	if ((match = block.match(/Mode[:|=]\s*([^\s]+)/)))               parsed.mode             = match[1].toLowerCase();
+	if ((match = block.match(/Noise level[:|=]\s*(-?[0-9]+)/)))      parsed.noise            = parseInt(match[1], 10);
+	if ((match = block.match(/Power Management[:|=]\s*(-?[0-9]+)/))) parsed.power_management = (match[1] === 'on');
+	if ((match = block.match(/Link Quality[:|=]\s*([0-9]+)/)))       parsed.quality          = parseInt(match[1], 10);
+	if ((match = block.match(/Sensitivity[:|=]\s*([0-9]+)/)))        parsed.sensitivity      = parseInt(match[1], 10);
+	if ((match = block.match(/Signal level[:|=]\s*(-?[0-9]+)/)))     parsed.signal           = parseInt(match[1], 10);
+	if ((match = block.match(/ESSID[:|=]\s*"([^"]+)"/)))             parsed.ssid             = match[1];
+	if ((match = block.match(/unassociated/)))                       parsed.unassociated     = true;
 
-	if ((match = block.match(/Frequency[:|=]\s*([0-9.]+)/))) {
-		parsed.frequency = parseFloat(match[1]);
-	}
-
-	if ((match = block.match(/Bit Rate[:|=]\s*([0-9.]+)/))) {
-		parsed.bitrate = parseFloat(match[1]);
-	}
-
-	if ((match = block.match(/IEEE\s*([^\s]+)/))) {
-		parsed.ieee = match[1].toLowerCase();
-	}
-
-	if ((match = block.match(/Mode[:|=]\s*([^\s]+)/))) {
-		parsed.mode = match[1].toLowerCase();
-	}
-
-	if ((match = block.match(/Noise level[:|=]\s*(-?[0-9]+)/))) {
-		parsed.noise = parseInt(match[1], 10);
-	}
-
-	if ((match = block.match(/Link Quality[:|=]\s*([0-9]+)/))) {
-		parsed.quality = parseInt(match[1], 10);
-	}
-
-	if ((match = block.match(/Sensitivity[:|=]\s*([0-9]+)/))) {
-		parsed.sensitivity = parseInt(match[1], 10);
-	}
-
-	if ((match = block.match(/Signal level[:|=]\s*(-?[0-9]+)/))) {
-		parsed.signal = parseInt(match[1], 10);
-	}
-
-	if ((match = block.match(/ESSID[:|=]\s*"([^"]+)"/))) {
-		parsed.ssid = match[1];
-	}
-
-	if ((match = block.match(/unassociated/))) {
-		parsed.unassociated = true;
-	}
+	if (parsed.frequency) parsed.channel = freq2channel(parsed.frequency);
 
 	return parsed;
 }
@@ -115,10 +107,9 @@ function parse_status(callback) {
 	return function (error, stdout) {
 		if (error) callback(error);
 		else {
-			callback(error,
-				stdout.trim().replace(/ {10,}/g, '').split('\n\n')
-					.map(parse_status_block)
-					.filter((i) => !!i));
+			callback(error, stdout.trim().replace(/ {10,}/g, '').split('\n\n')
+				.map(parse_status_block)
+				.filter((i) => !!i));
 		}
 	};
 }
