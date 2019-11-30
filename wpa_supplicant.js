@@ -21,7 +21,7 @@
  *
  */
 
-var child_process = require('child_process');
+const child_process = require('child_process');
 
 /**
  * The **wpa_supplicant** command is used to configure a wireless
@@ -31,11 +31,11 @@ var child_process = require('child_process');
  * @category wpa_supplicant
  *
  */
-var wpa_supplicant = module.exports = {
-  exec: child_process.exec,
-  disable: disable,
-  enable: enable,
-  manual: manual
+module.exports = {
+	exec : child_process.exec,
+	disable,
+	enable,
+	manual,
 };
 
 /**
@@ -57,10 +57,9 @@ var wpa_supplicant = module.exports = {
  *
  */
 function disable(interface, callback) {
-  var command = 'kill `pgrep -f "wpa_supplicant -i ' +
-    interface + ' .*"` || true';
+	const command = 'kill `pgrep -f "wpa_supplicant -i ' +    interface + ' .*"` || true';
 
-  return this.exec(command, callback);
+	return this.exec(command, callback);
 }
 
 /**
@@ -89,13 +88,11 @@ function disable(interface, callback) {
  *
  */
 function enable(options, callback) {
-  var file = options.interface + '-wpa_supplicant.conf';
+	const file = options.interface + '-wpa_supplicant.conf';
 
-  var command = 'wpa_passphrase "' + options.ssid + '" "' + options.passphrase
-    + '" > ' + file + ' && wpa_supplicant -i ' + options.interface + ' -B -D '
-    + options.driver + ' -c ' + file + ' && rm -f ' + file;
+	const command = 'wpa_passphrase "' + options.ssid + '" "' + options.passphrase    + '" > ' + file + ' && wpa_supplicant -i ' + options.interface + ' -B -D '    + options.driver + ' -c ' + file + ' && rm -f ' + file;
 
-  return this.exec(command, callback);
+	return this.exec(command, callback);
 }
 
 /**
@@ -108,15 +105,13 @@ function enable(options, callback) {
  * }
  */
 function manual(options, callback) {
-  var command = [
-    'wpa_supplicant',
-    '-i', options.interface,
-    '-s -B -P /run/wpa_supplicant/' + options.interface + '.pid',
-    '-D', options.drivers.join(','),
-    '-C /run/wpa_supplicant'
-  ].join(' ');
+	const command = [
+		'wpa_supplicant',
+		'-i', options.interface,
+		'-s -B -P /run/wpa_supplicant/' + options.interface + '.pid',
+		'-D', options.drivers.join(','),
+		'-C /run/wpa_supplicant',
+	].join(' ');
 
-  return this.exec(command, callback);
+	return this.exec(command, callback);
 }
-
-

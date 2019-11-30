@@ -24,64 +24,64 @@
 var should = require('should');
 var udhcpc = require('../udhcpc');
 
-describe('udhcpc', function() {
-  describe('udhcpc.disable(options, callback)', function() {
-    it('should stop the daemons', function(done) {
-      udhcpc.exec = function(command, callback) {
-        should(command).eql(
-          'kill `pgrep -f "^udhcpc -i wlan0"` || true');
+describe('udhcpc', () => {
+	describe('udhcpc.disable(options, callback)', () => {
+		it('should stop the daemons', (done) => {
+			udhcpc.exec = function (command, callback) {
+				should(command).eql(
+					'kill `pgrep -f "^udhcpc -i wlan0"` || true');
 
-        callback(null, '', '');
-      };
+				callback(null, '', '');
+			};
 
-      udhcpc.disable('wlan0', function(err) {
-        should(err).not.be.ok;
-        done();
-      });
-    })
+			udhcpc.disable('wlan0', (err) => {
+				should(err).not.be.ok;
+				done();
+			});
+		});
 
-    it('should handle errors', function(done) {
-      udhcpc.exec = function(command, callback) {
-        callback('error');
-      };
+		it('should handle errors', (done) => {
+			udhcpc.exec = function (command, callback) {
+				callback('error');
+			};
 
-      udhcpc.disable('wlan0', function(err) {
-        should(err).eql('error');
-        done();
-      });
-    })
-  })
+			udhcpc.disable('wlan0', (err) => {
+				should(err).eql('error');
+				done();
+			});
+		});
+	});
 
-  describe('udhcpc.enable(options, callback)', function() {
-    it('should start the daemon', function(done) {
-      udhcpc.exec = function(command, callback) {
-        should(command).eql('udhcpc -i wlan0 -n');
-        callback(null, '', '');
-      };
+	describe('udhcpc.enable(options, callback)', () => {
+		it('should start the daemon', (done) => {
+			udhcpc.exec = function (command, callback) {
+				should(command).eql('udhcpc -i wlan0 -n');
+				callback(null, '', '');
+			};
 
-      var options = {
-        interface: 'wlan0'
-      };
+			const options = {
+				interface : 'wlan0',
+			};
 
-      udhcpc.enable(options, function(err) {
-        should(err).not.be.ok;
-        done();
-      });
-    })
+			udhcpc.enable(options, (err) => {
+				should(err).not.be.ok;
+				done();
+			});
+		});
 
-    it('should handle errors', function(done) {
-      udhcpc.exec = function(command, callback) {
-        callback('error');
-      };
+		it('should handle errors', (done) => {
+			udhcpc.exec = function (command, callback) {
+				callback('error');
+			};
 
-      var options = {
-        interface: 'wlan0'
-      };
+			const options = {
+				interface : 'wlan0',
+			};
 
-      udhcpc.enable(options, function(err) {
-        should(err).eql('error');
-        done();
-      });
-    })
-  })
-})
+			udhcpc.enable(options, (err) => {
+				should(err).eql('error');
+				done();
+			});
+		});
+	});
+});

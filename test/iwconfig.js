@@ -25,177 +25,180 @@ var should = require('should');
 var iwconfig = require('../iwconfig');
 
 var IWCONFIG_STATUS_LINUX = [
-  'wlan0     IEEE 802.11bg  ESSID:"RaspberryPi"  Nickname:"<WIFI@REALTEK>"',
-  '          Mode:Master  Frequency:2.437 GHz  Access Point: 00:0B:81:95:12:21',
-  '          Bit Rate:54 Mb/s   Sensitivity:0/0',
-  '          Retry:off   RTS thr:off   Fragment thr:off',
-  '          Power Management:off',
-  '          Link Quality=18/100  Signal level=11/100  Noise level=0/100',
-  '          Rx invalid nwid:0  Rx invalid crypt:0  Rx invalid frag:0',
-  '          Tx excessive retries:0  Invalid misc:0   Missed beacon:0',
-  '',
-  '',
-  '',
-  'wlan1     unassociated  Nickname:"<WIFI@REALTEK>"',
-  '          Mode:Auto  Frequency=2.412 GHz  Access Point: Not-Associated',
-  '          Sensitivity:0/0',
-  '          Retry:off   RTS thr:off   Fragment thr:off',
-  '          Power Management:off',
-  '          Link Quality:0  Signal level:0  Noise level:0',
-  '          Rx invalid nwid:0  Rx invalid crypt:0  Rx invalid frag:0',
-  '          Tx excessive retries:0  Invalid misc:0   Missed beacon:0',
-  '',
-  'lo        no wireless extensions.',
-  ''
+	'wlan0     IEEE 802.11bg  ESSID:"RaspberryPi"  Nickname:"<WIFI@REALTEK>"',
+	'          Mode:Master  Frequency:2.437 GHz  Access Point: 00:0B:81:95:12:21',
+	'          Bit Rate:54 Mb/s   Sensitivity:0/0',
+	'          Retry:off   RTS thr:off   Fragment thr:off',
+	'          Power Management:off',
+	'          Link Quality=18/100  Signal level=11/100  Noise level=0/100',
+	'          Rx invalid nwid:0  Rx invalid crypt:0  Rx invalid frag:0',
+	'          Tx excessive retries:0  Invalid misc:0   Missed beacon:0',
+	'',
+	'',
+	'',
+	'wlan1     unassociated  Nickname:"<WIFI@REALTEK>"',
+	'          Mode:Auto  Frequency=2.412 GHz  Access Point: Not-Associated',
+	'          Sensitivity:0/0',
+	'          Retry:off   RTS thr:off   Fragment thr:off',
+	'          Power Management:off',
+	'          Link Quality:0  Signal level:0  Noise level:0',
+	'          Rx invalid nwid:0  Rx invalid crypt:0  Rx invalid frag:0',
+	'          Tx excessive retries:0  Invalid misc:0   Missed beacon:0',
+	'',
+	'lo        no wireless extensions.',
+	'',
 ].join('\n');
 
 var IWCONFIG_STATUS_INTERFACE_LINUX = [
-  'wlan0     IEEE 802.11bg  ESSID:"RaspberryPi"  Nickname:"<WIFI@REALTEK>"',
-  '          Mode:Master  Frequency:2.437 GHz  Access Point: 00:0B:81:95:12:21',
-  '          Bit Rate:54 Mb/s   Sensitivity:0/0',
-  '          Retry:off   RTS thr:off   Fragment thr:off',
-  '          Power Management:off',
-  '          Link Quality=18/100  Signal level=11/100  Noise level=0/100',
-  '          Rx invalid nwid:0  Rx invalid crypt:0  Rx invalid frag:0',
-  '          Tx excessive retries:0  Invalid misc:0   Missed beacon:0',
-  ''
+	'wlan0     IEEE 802.11bg  ESSID:"RaspberryPi"  Nickname:"<WIFI@REALTEK>"',
+	'          Mode:Master  Frequency:2.437 GHz  Access Point: 00:0B:81:95:12:21',
+	'          Bit Rate:54 Mb/s   Sensitivity:0/0',
+	'          Retry:off   RTS thr:off   Fragment thr:off',
+	'          Power Management:off',
+	'          Link Quality=18/100  Signal level=11/100  Noise level=0/100',
+	'          Rx invalid nwid:0  Rx invalid crypt:0  Rx invalid frag:0',
+	'          Tx excessive retries:0  Invalid misc:0   Missed beacon:0',
+	'',
 ].join('\n');
 
 var IWCONFIG_STATUS_INTERFACE_LINUX2 = [
-  'wlan0     IEEE 802.11abgn  ESSID:"FAKE-Wifi"',
-  '          Mode:Managed  Frequency:2.412 GHz  Access Point: 00:0B:81:95:12:21',
-  '          Bit Rate=36 Mb/s   Tx-Power=22 dBm',
-  '          Retry short limit:7   RTS thr:off   Fragment thr:off',
-  '          Encryption key:off',
-  '          Power Management:on',
-  '          Link Quality=63/70 Signal level=-47 dBm',
-  '          Rx invalid nwid:0  Rx invalid crypt:0  Rx invalid frag:0',
-  '          Tx excessive retries:0  Invalid misc:0   Missed beacon:0',
-  ''
+	'wlan0     IEEE 802.11abgn  ESSID:"FAKE-Wifi"',
+	'          Mode:Managed  Frequency:2.412 GHz  Access Point: 00:0B:81:95:12:21',
+	'          Bit Rate=36 Mb/s   Tx-Power=22 dBm',
+	'          Retry short limit:7   RTS thr:off   Fragment thr:off',
+	'          Encryption key:off',
+	'          Power Management:on',
+	'          Link Quality=63/70 Signal level=-47 dBm',
+	'          Rx invalid nwid:0  Rx invalid crypt:0  Rx invalid frag:0',
+	'          Tx excessive retries:0  Invalid misc:0   Missed beacon:0',
+	'',
 ].join('\n');
 
-describe('iwconfig', function() {
-  describe('iwconfig.status(callback)', function() {
-    it('should get the status for each interface', function(done) {
-      iwconfig.exec = function(command, callback) {
-        should(command).eql('iwconfig');
-        callback(null, IWCONFIG_STATUS_LINUX, '');
-      };
+describe('iwconfig', () => {
+	describe('iwconfig.status(callback)', () => {
+		it('should get the status for each interface', (done) => {
+			iwconfig.exec = function (command, callback) {
+				should(command).eql('iwconfig');
+				callback(null, IWCONFIG_STATUS_LINUX, '');
+			};
 
-      iwconfig.status(function(err, status) {
-        should(status).eql([
-          {
-            interface: 'wlan0',
-            ssid: 'RaspberryPi',
-            access_point: '00:0b:81:95:12:21',
-            ieee: '802.11bg',
-            mode: 'master',
-            frequency: 2.437,
-            sensitivity: 0,
-            quality: 18,
-            signal: 11,
-            noise: 0
-          },
-          {
-            interface: 'wlan1',
-            unassociated: true,
-            mode: 'auto',
-            frequency: 2.412,
-            sensitivity: 0,
-            quality: 0,
-            signal: 0,
-            noise: 0
-          },
-          {
-            interface: 'lo'
-          }
-        ]);
+			iwconfig.status((err, status) => {
+				should(status).eql([
+					{
+						interface    : 'wlan0',
+						ssid         : 'RaspberryPi',
+						access_point : '00:0b:81:95:12:21',
+						ieee         : '802.11bg',
+						mode         : 'master',
+						frequency    : 2.437,
+						bitrate      : 54,
+						sensitivity  : 0,
+						quality      : 18,
+						signal       : 11,
+						noise        : 0,
+					},
+					{
+						interface    : 'wlan1',
+						unassociated : true,
+						mode         : 'auto',
+						frequency    : 2.412,
+						sensitivity  : 0,
+						quality      : 0,
+						signal       : 0,
+						noise        : 0,
+					},
+					{
+						interface : 'lo',
+					},
+				]);
 
-        done();
-      });
-    })
+				done();
+			});
+		});
 
-    it('should handle errors', function(done) {
-      iwconfig.exec = function(command, callback) {
-        callback('error');
-      };
+		it('should handle errors', (done) => {
+			iwconfig.exec = function (command, callback) {
+				callback('error');
+			};
 
-      iwconfig.status(function(err, status) {
-        should(err).eql('error');
-        done();
-      });
-    })
-  })
+			iwconfig.status((err, status) => {
+				should(err).eql('error');
+				done();
+			});
+		});
+	});
 
-  describe('iwconfig.status(interface, callback)', function() {
-    it('should get the status for the specified interface', function(done) {
-      iwconfig.exec = function(command, callback) {
-        should(command).eql('iwconfig wlan0');
-        callback(null, IWCONFIG_STATUS_INTERFACE_LINUX, '');
-      };
+	describe('iwconfig.status(interface, callback)', () => {
+		it('should get the status for the specified interface', (done) => {
+			iwconfig.exec = function (command, callback) {
+				should(command).eql('iwconfig wlan0');
+				callback(null, IWCONFIG_STATUS_INTERFACE_LINUX, '');
+			};
 
-      iwconfig.status('wlan0', function(err, status) {
-        should(status).eql({
-          interface: 'wlan0',
-          ssid: 'RaspberryPi',
-          access_point: '00:0b:81:95:12:21',
-          ieee: '802.11bg',
-          mode: 'master',
-          frequency: 2.437,
-          sensitivity: 0,
-          quality: 18,
-          signal: 11,
-          noise: 0
-        });
+			iwconfig.status('wlan0', (err, status) => {
+				should(status).eql({
+					interface    : 'wlan0',
+					ssid         : 'RaspberryPi',
+					access_point : '00:0b:81:95:12:21',
+					ieee         : '802.11bg',
+					mode         : 'master',
+					frequency    : 2.437,
+					bitrate      : 54,
+					sensitivity  : 0,
+					quality      : 18,
+					signal       : 11,
+					noise        : 0,
+				});
 
-        done();
-      });
-    })
+				done();
+			});
+		});
 
-    it('should handle errors', function(done) {
-      iwconfig.exec = function(command, callback) {
-        callback('error');
-      };
+		it('should handle errors', (done) => {
+			iwconfig.exec = function (command, callback) {
+				callback('error');
+			};
 
-      iwconfig.status('wlan0', function(err, status) {
-        should(err).eql('error');
-        done();
-      });
-    })
-  })
+			iwconfig.status('wlan0', (err, status) => {
+				should(err).eql('error');
+				done();
+			});
+		});
+	});
 
-  describe('iwconfig.status(interface, callback)', function() {
-    it('should get the status for the specified interface', function(done) {
-      iwconfig.exec = function(command, callback) {
-        should(command).eql('iwconfig wlan0');
-        callback(null, IWCONFIG_STATUS_INTERFACE_LINUX2, '');
-      };
+	describe('iwconfig.status(interface, callback)', () => {
+		it('should get the status for the specified interface', (done) => {
+			iwconfig.exec = function (command, callback) {
+				should(command).eql('iwconfig wlan0');
+				callback(null, IWCONFIG_STATUS_INTERFACE_LINUX2, '');
+			};
 
-      iwconfig.status('wlan0', function(err, status) {
-        should(status).eql({
-          interface: 'wlan0',
-          ssid: 'FAKE-Wifi',
-          access_point: '00:0b:81:95:12:21',
-          ieee: '802.11abgn',
-          mode: 'managed',
-          frequency: 2.412,
-          quality: 63,
-          signal: -47
-        });
+			iwconfig.status('wlan0', (err, status) => {
+				should(status).eql({
+					interface    : 'wlan0',
+					ssid         : 'FAKE-Wifi',
+					access_point : '00:0b:81:95:12:21',
+					ieee         : '802.11abgn',
+					mode         : 'managed',
+					frequency    : 2.412,
+					bitrate      : 36,
+					quality      : 63,
+					signal       : -47,
+				});
 
-        done();
-      });
-    })
+				done();
+			});
+		});
 
-    it('should handle errors', function(done) {
-      iwconfig.exec = function(command, callback) {
-        callback('error');
-      };
+		it('should handle errors', (done) => {
+			iwconfig.exec = function (command, callback) {
+				callback('error');
+			};
 
-      iwconfig.status('wlan0', function(err, status) {
-        should(err).eql('error');
-        done();
-      });
-    })
-  })
-})
+			iwconfig.status('wlan0', (err, status) => {
+				should(err).eql('error');
+				done();
+			});
+		});
+	});
+});

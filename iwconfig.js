@@ -21,7 +21,7 @@
  *
  */
 
-var child_process = require('child_process');
+const child_process = require('child_process');
 
 /**
  * The **iwconfig** command is used to configure wireless network interfaces.
@@ -30,10 +30,57 @@ var child_process = require('child_process');
  * @category iwconfig
  *
  */
-var iwconfig = module.exports = {
-  exec: child_process.exec,
-  status: status
+module.exports = {
+	exec : child_process.exec,
+	status,
 };
+
+
+// Convert WiFi frequency into channel number
+function freq2channel(freq) {
+	switch (freq) {
+		case 2.412 : return 1;
+		case 2.417 : return 2;
+		case 2.422 : return 3;
+		case 2.427 : return 4;
+		case 2.432 : return 5;
+		case 2.437 : return 6;
+		case 2.442 : return 7;
+		case 2.447 : return 8;
+		case 2.452 : return 9;
+		case 2.457 : return 10;
+		case 2.462 : return 11;
+		case 2.467 : return 12;
+		case 2.472 : return 13;
+		case 2.484 : return 14;
+
+		case 5.180 : return 36;
+		case 5.200 : return 40;
+		case 5.220 : return 44;
+		case 5.240 : return 48;
+		case 5.260 : return 52;
+		case 5.280 : return 56;
+		case 5.300 : return 60;
+		case 5.320 : return 64;
+		case 5.500 : return 100;
+		case 5.520 : return 104;
+		case 5.540 : return 108;
+		case 5.560 : return 112;
+		case 5.580 : return 116;
+		case 5.600 : return 120;
+		case 5.620 : return 124;
+		case 5.640 : return 128;
+		case 5.660 : return 132;
+		case 5.680 : return 136;
+		case 5.700 : return 140;
+		case 5.720 : return 144;
+		case 5.745 : return 149;
+		case 5.765 : return 153;
+		case 5.785 : return 157;
+		case 5.805 : return 161;
+		case 5.825 : return 165;
+	}
+}
 
 /**
  * Parses the status for a single wireless network interface.
@@ -46,56 +93,31 @@ var iwconfig = module.exports = {
  *
  */
 function parse_status_block(block) {
-  var match;
+	let match;
 
-  // Skip out of the block is invalid
-  if (!block) return;
+	// Skip out of the block is invalid
+	if (!block) return;
 
-  var parsed = {
-    interface: block.match(/^([^\s]+)/)[1]
-  };
+	const parsed = {
+		interface : block.match(/^([^\s]+)/)[1],
+	};
 
-  if ((match = block.match(/Access Point:\s*([A-Fa-f0-9:]{17})/))) {
-    parsed.access_point = match[1].toLowerCase();
-  }
+	if ((match = block.match(/Access Point:\s*([A-Fa-f0-9:]{17})/))) parsed.access_point     = match[1].toLowerCase();
+	if ((match = block.match(/Bit Rate[:|=]\s*([0-9.]+)/)))          parsed.bitrate          = parseFloat(match[1]);
+	if ((match = block.match(/Frequency[:|=]\s*([0-9.]+)/)))         parsed.frequency        = parseFloat(match[1]);
+	if ((match = block.match(/IEEE\s*([^\s]+)/)))                    parsed.ieee             = match[1].toLowerCase();
+	if ((match = block.match(/Mode[:|=]\s*([^\s]+)/)))               parsed.mode             = match[1].toLowerCase();
+	if ((match = block.match(/Noise level[:|=]\s*(-?[0-9]+)/)))      parsed.noise            = parseInt(match[1], 10);
+	if ((match = block.match(/Power Management[:|=]\s*(-?[0-9]+)/))) parsed.power_management = (match[1] === 'on');
+	if ((match = block.match(/Link Quality[:|=]\s*([0-9]+)/)))       parsed.quality          = parseInt(match[1], 10);
+	if ((match = block.match(/Sensitivity[:|=]\s*([0-9]+)/)))        parsed.sensitivity      = parseInt(match[1], 10);
+	if ((match = block.match(/Signal level[:|=]\s*(-?[0-9]+)/)))     parsed.signal           = parseInt(match[1], 10);
+	if ((match = block.match(/ESSID[:|=]\s*"([^"]+)"/)))             parsed.ssid             = match[1];
+	if ((match = block.match(/unassociated/)))                       parsed.unassociated     = true;
 
-  if ((match = block.match(/Frequency[:|=]\s*([0-9\.]+)/))) {
-    parsed.frequency = parseFloat(match[1]);
-  }
+	if (parsed.frequency) parsed.channel = freq2channel(parsed.frequency);
 
-  if ((match = block.match(/IEEE\s*([^\s]+)/))) {
-    parsed.ieee = match[1].toLowerCase();
-  }
-
-  if ((match = block.match(/Mode[:|=]\s*([^\s]+)/))) {
-    parsed.mode = match[1].toLowerCase();
-  }
-
-  if ((match = block.match(/Noise level[:|=]\s*(-?[0-9]+)/))) {
-    parsed.noise = parseInt(match[1], 10);
-  }
-
-  if ((match = block.match(/Link Quality[:|=]\s*([0-9]+)/))) {
-    parsed.quality = parseInt(match[1], 10);
-  }
-
-  if ((match = block.match(/Sensitivity[:|=]\s*([0-9]+)/))) {
-    parsed.sensitivity = parseInt(match[1], 10);
-  }
-
-  if ((match = block.match(/Signal level[:|=]\s*(-?[0-9]+)/))) {
-    parsed.signal = parseInt(match[1], 10);
-  }
-
-  if ((match = block.match(/ESSID[:|=]\s*"([^"]+)"/))) {
-    parsed.ssid = match[1];
-  }
-
-  if ((match = block.match(/unassociated/))) {
-    parsed.unassociated = true;
-  }
-
-  return parsed;
+	return parsed;
 }
 
 /**
@@ -108,11 +130,14 @@ function parse_status_block(block) {
  *
  */
 function parse_status(callback) {
-  return function(error, stdout, stderr) {
-    if (error) callback(error);
-    else callback(error,
-      stdout.trim().split('\n\n').map(parse_status_block).filter(function(i) { return !! i }));
-  };
+	return function (error, stdout) {
+		if (error) callback(error);
+		else {
+			callback(error, stdout.trim().replace(/ {10,}/g, '').split('\n\n')
+				.map(parse_status_block)
+				.filter((i) => !!i));
+		}
+	};
 }
 
 /**
@@ -125,10 +150,10 @@ function parse_status(callback) {
  *
  */
 function parse_status_interface(callback) {
-  return function(error, stdout, stderr) {
-    if (error) callback(error);
-    else callback(error, parse_status_block(stdout.trim()));
-  };
+	return function (error, stdout) {
+		if (error) callback(error);
+		else callback(error, parse_status_block(stdout.trim()));
+	};
 }
 
 /**
@@ -175,11 +200,10 @@ function parse_status_interface(callback) {
  *
  */
 function status(interface, callback) {
-  if (callback) {
-    return this.exec('iwconfig ' + interface,
-      parse_status_interface(callback));
-  }
-  else {
-    return this.exec('iwconfig', parse_status(interface));
-  }
+	if (callback) {
+		return this.exec('iwconfig ' + interface,
+			parse_status_interface(callback));
+	}
+
+	return this.exec('iwconfig', parse_status(interface));
 }

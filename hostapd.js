@@ -21,7 +21,7 @@
  *
  */
 
-var child_process = require('child_process');
+const child_process = require('child_process');
 
 /**
  * The **hostpad** command is used to configure wireless access points.
@@ -30,10 +30,10 @@ var child_process = require('child_process');
  * @category hostapd
  *
  */
-var hostapd = module.exports = {
-  exec: child_process.exec,
-  disable: disable,
-  enable: enable
+module.exports = {
+	exec : child_process.exec,
+	disable,
+	enable,
 };
 
 /**
@@ -55,10 +55,10 @@ var hostapd = module.exports = {
  *
  */
 function disable(interface, callback) {
-  var file = interface + '-hostapd.conf';
+	const file = interface + '-hostapd.conf';
 
-  return this.exec('kill `pgrep -f "^hostapd -B ' + file + '"` || true',
-    callback);
+	return this.exec('kill `pgrep -f "^hostapd -B ' + file + '"` || true',
+		callback);
 }
 
 /**
@@ -90,15 +90,15 @@ function disable(interface, callback) {
  *
  */
 function enable(options, callback) {
-  var file = options.interface + '-hostapd.conf';
+	const file = options.interface + '-hostapd.conf';
 
-  var commands = [
-    'cat <<EOF >' + file + ' && hostapd -B ' + file + ' && rm -f ' + file
-  ];
+	const commands = [
+		'cat <<EOF >' + file + ' && hostapd -B ' + file + ' && rm -f ' + file,
+	];
 
-  Object.getOwnPropertyNames(options).forEach(function(key) {
-    commands.push(key + '=' + options[key]);
-  });
+	Object.getOwnPropertyNames(options).forEach((key) => {
+		commands.push(key + '=' + options[key]);
+	});
 
-  return this.exec(commands.join('\n'), callback);
+	return this.exec(commands.join('\n'), callback);
 }

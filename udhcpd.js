@@ -21,7 +21,7 @@
  *
  */
 
-var child_process = require('child_process');
+const child_process = require('child_process');
 
 /**
  * The **udhcpd** command is used to configure a dhcp server for a
@@ -31,10 +31,10 @@ var child_process = require('child_process');
  * @category udhcpd
  *
  */
-var udhcpd = module.exports = {
-  exec: child_process.exec,
-  disable: disable,
-  enable: enable
+module.exports = {
+	exec : child_process.exec,
+	disable,
+	enable,
 };
 
 /**
@@ -49,22 +49,22 @@ var udhcpd = module.exports = {
  *
  */
 function expand_r(options, lines, prefix) {
-  Object.getOwnPropertyNames(options).forEach(function(key) {
-    var full = prefix.concat(key);
-    var value = options[key];
+	Object.getOwnPropertyNames(options).forEach((key) => {
+		const full = prefix.concat(key);
+		const value = options[key];
 
-    if (Array.isArray(value)) {
-      value.forEach(function(val) {
-        lines.push(full.concat(val).join(' '));
-      });      
-    }
-    else if (typeof(value) == 'object') {
-      expand_r(value, lines, full);
-    }
-    else {
-      lines.push(full.concat(value).join(' '));
-    }
-  });
+		if (Array.isArray(value)) {
+			value.forEach((val) => {
+				lines.push(full.concat(val).join(' '));
+			});
+		}
+		else if (typeof (value) === 'object') {
+			expand_r(value, lines, full);
+		}
+		else {
+			lines.push(full.concat(value).join(' '));
+		}
+	});
 }
 
 /**
@@ -78,9 +78,9 @@ function expand_r(options, lines, prefix) {
  *
  */
 function expand(options) {
-  var lines = [];
-  expand_r(options, lines, []);
-  return lines;
+	const lines = [];
+	expand_r(options, lines, []);
+	return lines;
 }
 
 /**
@@ -108,18 +108,18 @@ function expand(options) {
  * };
  *
  * udhcpd.enable(options, function(err) {
- *   // the dhcp server was started 
+ *   // the dhcp server was started
  * });
  *
  */
 function enable(options, callback) {
-  var file = options.interface + '-udhcpd.conf';
+	const file = options.interface + '-udhcpd.conf';
 
-  var commands = [].concat(
-    'cat <<EOF >' + file + ' && udhcpd ' + file + ' && rm -f ' + file,
-    expand(options));
+	const commands = [].concat(
+		'cat <<EOF >' + file + ' && udhcpd ' + file + ' && rm -f ' + file,
+		expand(options));
 
-  return this.exec(commands.join('\n'), callback);
+	return this.exec(commands.join('\n'), callback);
 }
 
 /**
@@ -136,11 +136,11 @@ function enable(options, callback) {
  * var udhcpd = require('wireless-tools/udhcpd');
  *
  * udhcpd.disable('wlan0', function(err) {
- *   // the dhcp server was stopped 
+ *   // the dhcp server was stopped
  * });
  *
  */
 function disable(interface, callback) {
-  var file = interface + '-udhcpd.conf';
-  return this.exec('kill `pgrep -f "^udhcpd ' + file + '"` || true', callback);
+	const file = interface + '-udhcpd.conf';
+	return this.exec('kill `pgrep -f "^udhcpd ' + file + '"` || true', callback);
 }

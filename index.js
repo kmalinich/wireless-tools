@@ -21,14 +21,14 @@
  *
  */
 
-var wireless_tools = module.exports = {
-  hostapd: require('./hostapd'),
-  ifconfig: require('./ifconfig'),
-  iwconfig: require('./iwconfig'),
-  iwlist: require('./iwlist'),
-  iw: require('./iw'),
-  udhcpc: require('./udhcpc'),
-  udhcpd: require('./udhcpd'),
-  wpa: require('./wpa_cli'),
-  wpa_supplicant: require('./wpa_supplicant')
+module.exports = {
+	hostapd        : require('./hostapd'),
+	ifconfig       : require('./ifconfig'),
+	iwconfig       : require('./iwconfig'),
+	iwlist         : require('./iwlist'),
+	iw             : require('./iw'),
+	udhcpc         : require('./udhcpc'),
+	udhcpd         : require('./udhcpd'),
+	wpa            : require('./wpa_cli'),
+	wpa_supplicant : require('./wpa_supplicant'),
 };

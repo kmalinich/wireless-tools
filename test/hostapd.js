@@ -24,85 +24,76 @@
 var should = require('should');
 var hostapd = require('../hostapd');
 
-describe('hostapd', function() {
-  describe('hostapd.disable(options, callback)', function() {
-    it('should stop the daemons', function(done) {
-      hostapd.exec = function(command, callback) {
-        should(command).eql(
-          'kill `pgrep -f "^hostapd -B wlan0-hostapd.conf"` || true');
-        callback(null, '', '');
-      };
+describe('hostapd', () => {
+	describe('hostapd.disable(options, callback)', () => {
+		it('should stop the daemons', (done) => {
+			hostapd.exec = function (command, callback) {
+				should(command).eql(
+					'kill `pgrep -f "^hostapd -B wlan0-hostapd.conf"` || true');
+				callback(null, '', '');
+			};
 
-      hostapd.disable('wlan0', function(err) {
-        should(err).not.be.ok;
-        done();
-      });
-    })
+			hostapd.disable('wlan0', (err) => {
+				should(err).not.be.ok;
+				done();
+			});
+		});
 
-    it('should handle errors', function(done) {
-      hostapd.exec = function(command, callback) {
-        callback('error');
-      };
+		it('should handle errors', (done) => {
+			hostapd.exec = function (command, callback) {
+				callback('error');
+			};
 
-      hostapd.disable('wlan0', function(err) {
-        should(err).eql('error');
-        done();
-      });
-    })
-  })
+			hostapd.disable('wlan0', (err) => {
+				should(err).eql('error');
+				done();
+			});
+		});
+	});
 
-  describe('hostapd.enable(options, callback)', function() {
-    it('should start the daemon', function(done) {
-      hostapd.exec = function(command, callback) {
-        should(command).eql('cat <<EOF >wlan0-hostapd.conf' +
-          ' && hostapd -B wlan0-hostapd.conf' +
-          ' && rm -f wlan0-hostapd.conf\n' +
-          'channel=6\n' +
-          'driver=rtl871xdrv\n' +
-          'hw_mode=g\n' +
-          'interface=wlan0\n' +
-          'ssid=RaspberryPi\n' +
-          'wpa=2\n' +
-          'wpa_passphrase=raspberry');
+	describe('hostapd.enable(options, callback)', () => {
+		it('should start the daemon', (done) => {
+			hostapd.exec = function (command, callback) {
+				should(command).eql('cat <<EOF >wlan0-hostapd.conf' +          ' && hostapd -B wlan0-hostapd.conf' +          ' && rm -f wlan0-hostapd.conf\n' +          'channel=6\n' +          'driver=rtl871xdrv\n' +          'hw_mode=g\n' +          'interface=wlan0\n' +          'ssid=RaspberryPi\n' +          'wpa=2\n' +          'wpa_passphrase=raspberry');
 
-        callback(null, '', '');
-      };
+				callback(null, '', '');
+			};
 
-      var options = {
-        channel: 6,
-        driver: 'rtl871xdrv',
-        hw_mode: 'g',
-        interface: 'wlan0',
-        ssid: 'RaspberryPi',
-        wpa: 2,
-        wpa_passphrase: 'raspberry'
-      };
+			const options = {
+				channel        : 6,
+				driver         : 'rtl871xdrv',
+				hw_mode        : 'g',
+				interface      : 'wlan0',
+				ssid           : 'RaspberryPi',
+				wpa            : 2,
+				wpa_passphrase : 'raspberry',
+			};
 
-      hostapd.enable(options, function(err) {
-        should(err).not.be.ok;
-        done();
-      });
-    })
+			hostapd.enable(options, (err) => {
+				should(err).not.be.ok;
+				done();
+			});
+		});
 
-    it('should handle errors', function(done) {
-      hostapd.exec = function(command, callback) {
-        callback('error');
-      };
+		it('should handle errors', (done) => {
+			hostapd.exec = function (command, callback) {
+				callback('error');
+			};
 
-      var options = {
-        channel: 6,
-        driver: 'rtl871xdrv',
-        hw_mode: 'g',
-        interface: 'wlan0',
-        ssid: 'RaspberryPi',
-        wpa: 2,
-        wpa_passphrase: 'raspberry'
-      };
+			const options = {
+				channel        : 6,
+				driver         : 'rtl871xdrv',
+				hw_mode        : 'g',
+				interface      : 'wlan0',
+				ssid           : 'RaspberryPi',
+				wpa            : 2,
+				wpa_passphrase : 'raspberry',
+			};
 
-      hostapd.enable(options, function(err) {
-        should(err).eql('error');
-        done();
-      });
-    })
-  })
-})
+			hostapd.enable(options, (err) => {
+				should(err).eql('error');
+				done();
+			});
+		});
+	});
+});

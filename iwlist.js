@@ -21,7 +21,7 @@
  *
  */
 
-var child_process = require('child_process');
+const child_process = require('child_process');
 
 /**
  * The **iwlist** command is used to get detailed information from a
@@ -31,9 +31,9 @@ var child_process = require('child_process');
  * @category iwlist
  *
  */
-var iwlist = module.exports = {
-  exec: child_process.exec,
-  scan: scan
+module.exports = {
+	exec : child_process.exec,
+	scan,
 };
 
 /**
@@ -47,7 +47,7 @@ var iwlist = module.exports = {
  *
  */
 function has_ssid(network) {
-  return network.ssid;
+	return network.ssid;
 }
 
 /**
@@ -61,9 +61,8 @@ function has_ssid(network) {
  *
  */
 function has_keys(network) {
-  return Object.keys(network).length !== 0;
+	return Object.keys(network).length !== 0;
 }
-
 
 
 /**
@@ -78,7 +77,7 @@ function has_keys(network) {
  *
  */
 function by_signal(a, b) {
-  return b.signal - a.signal;
+	return b.signal - a.signal;
 }
 
 /**
@@ -92,55 +91,55 @@ function by_signal(a, b) {
  *
  */
 function parse_cell(cell) {
-  var parsed = { };
-  var match;
+	const parsed = { };
+	let match;
 
-  if ((match = cell.match(/Address\s*[:|=]\s*([A-Fa-f0-9:]{17})/))) {
-    parsed.address = match[1].toLowerCase();
-  }
+	if ((match = cell.match(/Address\s*[:|=]\s*([A-Fa-f0-9:]{17})/))) {
+		parsed.address = match[1].toLowerCase();
+	}
 
-  if ((match = cell.match(/Channel\s*([0-9]+)/))) {
-    parsed.channel = parseInt(match[1], 10);
-  }
+	if ((match = cell.match(/Channel\s*([0-9]+)/))) {
+		parsed.channel = parseInt(match[1], 10);
+	}
 
-  if ((match = cell.match(/Frequency\s*[:|=]\s*([0-9\.]+)\s*GHz/))) {
-    parsed.frequency = parseFloat(match[1]);
-  }
+	if ((match = cell.match(/Frequency\s*[:|=]\s*([0-9.]+)\s*GHz/))) {
+		parsed.frequency = parseFloat(match[1]);
+	}
 
-  if ((match = cell.match(/Mode\s*[:|=]\s*([^\s]+)/))) {
-    parsed.mode = match[1].toLowerCase();
-  }
+	if ((match = cell.match(/Mode\s*[:|=]\s*([^\s]+)/))) {
+		parsed.mode = match[1].toLowerCase();
+	}
 
-  if ((match = cell.match(/Quality\s*[:|=]\s*([0-9]+)/))) {
-    parsed.quality = parseInt(match[1], 10);
-  }
+	if ((match = cell.match(/Quality\s*[:|=]\s*([0-9]+)/))) {
+		parsed.quality = parseInt(match[1], 10);
+	}
 
-  if ((match = cell.match(/Signal level\s*[:|=]\s*(-?[0-9]+)/))) {
-    parsed.signal = parseInt(match[1], 10);
-  }
+	if ((match = cell.match(/Signal level\s*[:|=]\s*(-?[0-9]+)/))) {
+		parsed.signal = parseInt(match[1], 10);
+	}
 
-  if ((match = cell.match(/Noise level\s*[:|=]\s*(-?[0-9]+)/))) {
-    parsed.noise = parseInt(match[1], 10);
-  }
+	if ((match = cell.match(/Noise level\s*[:|=]\s*(-?[0-9]+)/))) {
+		parsed.noise = parseInt(match[1], 10);
+	}
 
-  if ((match = cell.match(/ESSID\s*[:|=]\s*"([^"]+)"/))) {
-    parsed.ssid = match[1];
-  }
+	if ((match = cell.match(/ESSID\s*[:|=]\s*"([^"]+)"/))) {
+		parsed.ssid = match[1];
+	}
 
-  if ((match = cell.match(/WPA2\s+Version/))) {
-    parsed.security = 'wpa2';
-  }
-  else if ((match = cell.match(/WPA\s+Version/))) {
-    parsed.security = 'wpa';
-  }
-  else if ((match = cell.match(/Encryption key\s*[:|=]\s*on/))) {
-    parsed.security = 'wep';
-  }
-  else if ((match = cell.match(/Encryption key\s*[:|=]\s*off/))) {
-    parsed.security = 'open';
-  }
+	if ((match = cell.match(/WPA2\s+Version/))) {
+		parsed.security = 'wpa2';
+	}
+	else if ((match = cell.match(/WPA\s+Version/))) {
+		parsed.security = 'wpa';
+	}
+	else if ((match = cell.match(/Encryption key\s*[:|=]\s*on/))) {
+		parsed.security = 'wep';
+	}
+	else if ((match = cell.match(/Encryption key\s*[:|=]\s*off/))) {
+		parsed.security = 'open';
+	}
 
-  return parsed;
+	return parsed;
 }
 
 /**
@@ -153,23 +152,24 @@ function parse_cell(cell) {
  *
  */
 function parse_scan(show_hidden, callback) {
-  return function(error, stdout, stderr) {
-    if (error) callback(error);
-    else
-      if (show_hidden) {
-        callback(error, stdout
-        .split(/Cell [0-9]+ -/)
-        .map(parse_cell)
-        .filter(has_keys)
-        .sort(by_signal));
-    } else {
-        callback(error, stdout
-        .split(/Cell [0-9]+ -/)
-        .map(parse_cell)
-        .filter(has_ssid)
-        .sort(by_signal));
-    }
-  };
+	return function (error, stdout) {
+		if (error) callback(error);
+		else
+		if (show_hidden) {
+			callback(error, stdout
+				.split(/Cell [0-9]+ -/)
+				.map(parse_cell)
+				.filter(has_keys)
+				.sort(by_signal));
+		}
+		else {
+			callback(error, stdout
+				.split(/Cell [0-9]+ -/)
+				.map(parse_cell)
+				.filter(has_ssid)
+				.sort(by_signal));
+		}
+	};
 }
 
 /**
@@ -291,20 +291,23 @@ function parse_scan(show_hidden, callback) {
  *
  */
 function scan(options, callback) {
-  var interface, show_hidden
-  if (typeof options === 'string') {
-    var interface = options;
-    var show_hidden = false;
-  } else {
-    var interface = options.iface;
-    var show_hidden = options.show_hidden || false;
-  }
+	let interface;
+	let show_hidden;
 
-  var extra_params = '';
+	if (typeof options === 'string') {
+		interface = options;
+		show_hidden = false;
+	}
+	else {
+		interface = options.iface;
+		show_hidden = options.show_hidden || false;
+	}
 
-  if (options.ssid) {
-    extra_params = ' essid ' + options.ssid;
-  }
+	let extra_params = '';
 
-  this.exec('iwlist ' + interface + ' scan' + extra_params, parse_scan(show_hidden, callback));
+	if (options.ssid) {
+		extra_params = ' essid ' + options.ssid;
+	}
+
+	this.exec('iwlist ' + interface + ' scan' + extra_params, parse_scan(show_hidden, callback));
 }
