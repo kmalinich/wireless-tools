@@ -21,7 +21,7 @@
  *
  */
 
-var child_process = require('child_process');
+const child_process = require('child_process');
 
 /**
  * The **iwlist** command is used to get detailed information from a
@@ -31,7 +31,7 @@ var child_process = require('child_process');
  * @category iwlist
  *
  */
-var iwlist = module.exports = {
+module.exports = {
 	exec : child_process.exec,
 	scan,
 };
@@ -102,7 +102,7 @@ function parse_cell(cell) {
 		parsed.channel = parseInt(match[1], 10);
 	}
 
-	if ((match = cell.match(/Frequency\s*[:|=]\s*([0-9\.]+)\s*GHz/))) {
+	if ((match = cell.match(/Frequency\s*[:|=]\s*([0-9.]+)\s*GHz/))) {
 		parsed.frequency = parseFloat(match[1]);
 	}
 
@@ -152,7 +152,7 @@ function parse_cell(cell) {
  *
  */
 function parse_scan(show_hidden, callback) {
-	return function (error, stdout, stderr) {
+	return function (error, stdout) {
 		if (error) callback(error);
 		else
 		if (show_hidden) {
@@ -291,14 +291,16 @@ function parse_scan(show_hidden, callback) {
  *
  */
 function scan(options, callback) {
-	var interface, show_hidden;
+	let interface;
+	let show_hidden;
+
 	if (typeof options === 'string') {
-		var interface = options;
-		var show_hidden = false;
+		interface = options;
+		show_hidden = false;
 	}
 	else {
-		var interface = options.iface;
-		var show_hidden = options.show_hidden || false;
+		interface = options.iface;
+		show_hidden = options.show_hidden || false;
 	}
 
 	let extra_params = '';

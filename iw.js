@@ -21,7 +21,7 @@
  *
  */
 
-var child_process = require('child_process');
+const child_process = require('child_process');
 
 /**
  * The **iw** command is used to control nl80211 radios.
@@ -30,7 +30,7 @@ var child_process = require('child_process');
  * @category iw
  *
  */
-var iw = module.exports = {
+module.exports = {
 	exec : child_process.exec,
 	scan,
 };
@@ -148,7 +148,7 @@ function parse_cell(cell) {
  *
  */
 function parse_scan(show_hidden, callback) {
-	return function (error, stdout, stderr) {
+	return function (error, stdout) {
 		if (error) callback(error);
 		else
 		if (show_hidden) {
@@ -179,15 +179,18 @@ function parse_scan(show_hidden, callback) {
  * @param {function} callback The callback function.
  */
 function scan(options, callback) {
-	var interface, show_hidden, exec_options;
+	let exec_options;
+	let interface;
+	let show_hidden;
+
 	if (typeof options === 'string') {
-		var interface = options;
-		var show_hidden = false;
+		interface = options;
+		show_hidden = false;
 	}
 	else {
-		var interface = options.iface;
-		var show_hidden = options.show_hidden || false;
-		var exec_options = options.exec_options || {};
+		interface    = options.iface;
+		show_hidden  = options.show_hidden || false;
+		exec_options = options.exec_options || {};
 	}
 
 	this.exec('iw dev ' + interface + ' scan', exec_options, parse_scan(show_hidden, callback));

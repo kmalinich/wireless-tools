@@ -21,7 +21,7 @@
  *
  */
 
-var child_process = require('child_process');
+const child_process = require('child_process');
 
 /**
  * The **udhcpd** command is used to configure a dhcp server for a
@@ -31,7 +31,7 @@ var child_process = require('child_process');
  * @category udhcpd
  *
  */
-var udhcpd = module.exports = {
+module.exports = {
 	exec : child_process.exec,
 	disable,
 	enable,

@@ -21,7 +21,7 @@
  *
  */
 
-var wireless_tools = module.exports = {
+module.exports = {
 	hostapd        : require('./hostapd'),
 	ifconfig       : require('./ifconfig'),
 	iwconfig       : require('./iwconfig'),

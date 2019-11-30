@@ -21,7 +21,7 @@
  *
  */
 
-var child_process = require('child_process');
+const child_process = require('child_process');
 
 /**
  * The **ifconfig** command is used to configure network interfaces.
@@ -30,7 +30,7 @@ var child_process = require('child_process');
  * @category ifconfig
  *
  */
-var ifconfig = module.exports = {
+module.exports = {
 	exec : child_process.exec,
 	status,
 	down,
@@ -51,18 +51,18 @@ function parse_status_block(block) {
 	let match;
 
 	const parsed = {
-		interface : block.match(/^([^\s^\:]+)/)[1],
+		interface : block.match(/^([^\s^:]+)/)[1],
 	};
 
 	if ((match = block.match(/Link encap:\s*([^\s]+)/))) {
 		parsed.link = match[1].toLowerCase();
 	}
 
-	if (!parsed.link && (match = block.match(/ether[^\(]*\(([^\s]+)\)/))) {
+	if (!parsed.link && (match = block.match(/ether[^(]*\(([^\s]+)\)/))) {
 		parsed.link = match[1].toLowerCase();
 	}
 
-	if (!parsed.link && (match = block.match(/loop[^\(]*\(([^\s]+)/))) {
+	if (!parsed.link && (match = block.match(/loop[^(]*\(([^\s]+)/))) {
 		parsed.link = match[1].toLowerCase();
 	}
 
@@ -139,7 +139,7 @@ function parse_status_block(block) {
  *
  */
 function parse_status(callback) {
-	return function (error, stdout, stderr) {
+	return function (error, stdout) {
 		if (error) callback(error);
 		else {
 			callback(error,
@@ -158,7 +158,7 @@ function parse_status(callback) {
  *
  */
 function parse_status_interface(callback) {
-	return function (error, stdout, stderr) {
+	return function (error, stdout) {
 		if (error) callback(error);
 		else callback(error, parse_status_block(stdout.trim()));
 	};

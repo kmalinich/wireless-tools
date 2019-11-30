@@ -21,7 +21,7 @@
  *
  */
 
-var child_process = require('child_process');
+const child_process = require('child_process');
 
 /**
  * The **hostpad** command is used to configure wireless access points.
@@ -30,7 +30,7 @@ var child_process = require('child_process');
  * @category hostapd
  *
  */
-var hostapd = module.exports = {
+module.exports = {
 	exec : child_process.exec,
 	disable,
 	enable,

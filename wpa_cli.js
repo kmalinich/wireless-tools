@@ -21,7 +21,7 @@
  *
  */
 
-var child_process = require('child_process');
+const child_process = require('child_process');
 
 /**
  * The **wpa_cli** command is used to configure wpa network interfaces.
@@ -30,7 +30,7 @@ var child_process = require('child_process');
  * @category wpa_cli
  *
  */
-var wpa_cli = module.exports = {
+module.exports = {
 	exec : child_process.exec,
 	status,
 	bssid,
@@ -59,7 +59,7 @@ function exportCommand(commandName) {
 	};
 }
 
-commands = [
+const commands = [
 	'reassociate',
 	'reattach',
 	'disconnect',
@@ -70,7 +70,7 @@ commands = [
 	'save_config',
 ];
 
-for (var i in commands) {
+for (const i in commands) {
 	exportCommand(commands[i]);
 }
 
@@ -154,8 +154,6 @@ function parse_status_block(block) {
  *
  */
 function parse_command_block(block) {
-	let match;
-
 	const parsed = {
 		result : block.match(/^([^\s]+)/)[1],
 	};
@@ -173,7 +171,7 @@ function parse_command_block(block) {
  *
  */
 function parse_status_interface(callback) {
-	return function (error, stdout, stderr) {
+	return function (error, stdout) {
 		if (error) {
 			callback(error);
 		}
@@ -193,7 +191,7 @@ function parse_status_interface(callback) {
  *
  */
 function parse_command_interface(callback) {
-	return function (error, stdout, stderr) {
+	return function (error, stdout) {
 		if (error) {
 			callback(error);
 		}
@@ -225,9 +223,8 @@ function decodeUtf8(string) {
 function parse_scan_results(block) {
 	let match;
 	const results = [];
-	let lines;
 
-	lines = block.split('\n').map((item) => item + '\n');
+	const lines = block.split('\n').map((item) => item + '\n');
 	lines.forEach((entry) => {
 		const parsed = {};
 		if ((match = entry.match(/([A-Fa-f0-9:]{17})\t/))) {
@@ -268,7 +265,7 @@ function parse_scan_results(block) {
  *
  */
 function parse_scan_results_interface(callback) {
-	return function (error, stdout, stderr) {
+	return function (error, stdout) {
 		if (error) {
 			callback(error);
 		}

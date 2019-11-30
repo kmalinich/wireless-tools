@@ -21,7 +21,7 @@
  *
  */
 
-var child_process = require('child_process');
+const child_process = require('child_process');
 
 /**
  * The **wpa_supplicant** command is used to configure a wireless
@@ -31,7 +31,7 @@ var child_process = require('child_process');
  * @category wpa_supplicant
  *
  */
-var wpa_supplicant = module.exports = {
+module.exports = {
 	exec : child_process.exec,
 	disable,
 	enable,
