@@ -34,11 +34,11 @@
     "space": true
   },
   "devDependencies": {
-    "codeclimate-test-reporter": "^0.3.1",
-    "istanbul": "^0.4.3",
-    "mocha": "^2.5.3",
-    "should": "^9.0.2",
-    "xo": "^0.16.0"
+    "codeclimate-test-reporter": "^0.5.1",
+    "istanbul": "^0.4.5",
+    "mocha": "^6.2.2",
+    "should": "^13.2.3",
+    "xo": "^0.25.3"
   },
   "contributors": [
     {
