@@ -24,113 +24,110 @@
 var should = require('should');
 var wpa_supplicant = require('../wpa_supplicant');
 
-describe('wpa_supplicant', function() {
-  describe('wpa_supplicant.disable(options, callback)', function() {
-    it('should stop the daemons', function(done) {
-      wpa_supplicant.exec = function(command, callback) {
-        should(command).eql(
-          'kill `pgrep -f "wpa_supplicant -i wlan0 .*"` || true');
+describe('wpa_supplicant', () => {
+	describe('wpa_supplicant.disable(options, callback)', () => {
+		it('should stop the daemons', (done) => {
+			wpa_supplicant.exec = function (command, callback) {
+				should(command).eql(
+					'kill `pgrep -f "wpa_supplicant -i wlan0 .*"` || true');
 
-        callback(null, '', '');
-      };
+				callback(null, '', '');
+			};
 
-      wpa_supplicant.disable('wlan0', function(err) {
-        should(err).not.be.ok;
-        done();
-      });
-    })
+			wpa_supplicant.disable('wlan0', (err) => {
+				should(err).not.be.ok;
+				done();
+			});
+		});
 
-    it('should handle errors', function(done) {
-      wpa_supplicant.exec = function(command, callback) {
-        callback('error');
-      };
+		it('should handle errors', (done) => {
+			wpa_supplicant.exec = function (command, callback) {
+				callback('error');
+			};
 
-      wpa_supplicant.disable('wlan0', function(err) {
-        should(err).eql('error');
-        done();
-      });
-    })
-  })
+			wpa_supplicant.disable('wlan0', (err) => {
+				should(err).eql('error');
+				done();
+			});
+		});
+	});
 
-  describe('wpa_supplicant.enable(options, callback)', function() {
-    it('should start the daemon', function(done) {
-      wpa_supplicant.exec = function(command, callback) {
-        should(command).eql('wpa_passphrase "RaspberryPi" "raspberry"' +
-          ' > wlan0-wpa_supplicant.conf &&' +
-          ' wpa_supplicant -i wlan0 -B -D wext -c wlan0-wpa_supplicant.conf' +
-          ' && rm -f wlan0-wpa_supplicant.conf');
+	describe('wpa_supplicant.enable(options, callback)', () => {
+		it('should start the daemon', (done) => {
+			wpa_supplicant.exec = function (command, callback) {
+				should(command).eql('wpa_passphrase "RaspberryPi" "raspberry"' +          ' > wlan0-wpa_supplicant.conf &&' +          ' wpa_supplicant -i wlan0 -B -D wext -c wlan0-wpa_supplicant.conf' +          ' && rm -f wlan0-wpa_supplicant.conf');
 
-        callback(null, '', '');
-      };
+				callback(null, '', '');
+			};
 
-      var options = {
-        interface: 'wlan0',
-        ssid: 'RaspberryPi',
-        passphrase: 'raspberry',
-        driver: 'wext'
-      };
+			const options = {
+				interface  : 'wlan0',
+				ssid       : 'RaspberryPi',
+				passphrase : 'raspberry',
+				driver     : 'wext',
+			};
 
-      wpa_supplicant.enable(options, function(err) {
-        should(err).not.be.ok;
-        done();
-      });
-    })
+			wpa_supplicant.enable(options, (err) => {
+				should(err).not.be.ok;
+				done();
+			});
+		});
 
-    it('should handle errors', function(done) {
-      wpa_supplicant.exec = function(command, callback) {
-        callback('error');
-      };
+		it('should handle errors', (done) => {
+			wpa_supplicant.exec = function (command, callback) {
+				callback('error');
+			};
 
-      var options = {
-        interface: 'wlan0',
-        ssid: 'RaspberryPi',
-        passphrase: 'raspberry',
-        driver: 'wext'
-      };
+			const options = {
+				interface  : 'wlan0',
+				ssid       : 'RaspberryPi',
+				passphrase : 'raspberry',
+				driver     : 'wext',
+			};
 
-      wpa_supplicant.enable(options, function(err) {
-        should(err).eql('error');
-        done();
-      });
-    })
-  })
+			wpa_supplicant.enable(options, (err) => {
+				should(err).eql('error');
+				done();
+			});
+		});
+	});
 
-  describe('wpa_supplicant.manual(options, callback)', function() {
-    it('should start the daemon', function(done) {
-      wpa_supplicant.exec = function(command, callback) {
-        should(command).eql([
-          'wpa_supplicant -i wlan0 -s -B -P /run/wpa_supplicant/wlan0.pid',
-          '-D nl80211,wext -C /run/wpa_supplicant'
-          ].join(' '));
+	describe('wpa_supplicant.manual(options, callback)', () => {
+		it('should start the daemon', (done) => {
+			wpa_supplicant.exec = function (command, callback) {
+				should(command).eql([
+					'wpa_supplicant -i wlan0 -s -B -P /run/wpa_supplicant/wlan0.pid',
+					'-D nl80211,wext -C /run/wpa_supplicant',
+				].join(' '));
 
-        callback(null, '', '');
-      };
+				callback(null, '', '');
+			};
 
-      var options = {
-        interface: 'wlan0',
-        drivers: [ 'nl80211', 'wext' ]
-      };
+			const options = {
+				interface : 'wlan0',
+				drivers   : [ 'nl80211', 'wext' ],
+			};
 
-      wpa_supplicant.manual(options, function(err) {
-        should(err).not.be.ok;
-        done();
-      });
-    })
+			wpa_supplicant.manual(options, (err) => {
+				should(err).not.be.ok;
+				done();
+			});
+		});
 
-    it('should handle errors', function(done) {
-      wpa_supplicant.exec = function(command, callback) {
-        callback('error');
-      };
+		it('should handle errors', (done) => {
+			wpa_supplicant.exec = function (command, callback) {
+				callback('error');
+			};
 
-      var options = {
-        interface: 'wlan0',
-        drivers: [ 'nl80211', 'wext' ]
-      };
+			const options = {
+				interface : 'wlan0',
+				drivers   : [ 'nl80211', 'wext' ],
+			};
 
-      wpa_supplicant.manual(options, function(err) {
-        should(err).eql('error');
-        done();
-      });
-    })
-  })
-})
+			wpa_supplicant.manual(options, (err) => {
+				should(err).eql('error');
+				done();
+			});
+		});
+	});
+});

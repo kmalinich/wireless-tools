@@ -32,9 +32,9 @@ var child_process = require('child_process');
  *
  */
 var udhcpc = module.exports = {
-  exec: child_process.exec,
-  disable: disable,
-  enable: enable
+	exec : child_process.exec,
+	disable,
+	enable,
 };
 
 /**
@@ -56,8 +56,8 @@ var udhcpc = module.exports = {
  *
  */
 function disable(interface, callback) {
-  var command = 'kill `pgrep -f "^udhcpc -i ' + interface + '"` || true';
-  return this.exec(command, callback);
+	const command = 'kill `pgrep -f "^udhcpc -i ' + interface + '"` || true';
+	return this.exec(command, callback);
 }
 
 /**
@@ -78,11 +78,11 @@ function disable(interface, callback) {
  * };
  *
  * udhcpc.enable(options, function(err) {
- *   // the dhcp client was started 
+ *   // the dhcp client was started
  * });
  *
  */
 function enable(options, callback) {
-  var command = 'udhcpc -i ' + options.interface + ' -n';
-  return this.exec(command, callback);  
+	const command = 'udhcpc -i ' + options.interface + ' -n';
+	return this.exec(command, callback);
 }

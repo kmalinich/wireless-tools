@@ -31,47 +31,47 @@ var child_process = require('child_process');
  *
  */
 var wpa_cli = module.exports = {
-    exec: child_process.exec,
-    status: status,
-    bssid: bssid,
-    set: set,
-    add_network: add_network,
-    set_network: set_network,
-    enable_network: enable_network,
-    disable_network: disable_network,
-    remove_network: remove_network,
-    select_network: select_network,
-    scan_results: scan_results,
+	exec : child_process.exec,
+	status,
+	bssid,
+	set,
+	add_network,
+	set_network,
+	enable_network,
+	disable_network,
+	remove_network,
+	select_network,
+	scan_results,
 };
 
 // add simple command without arguments and simple outputs
 function buildCommand(commandName, interface, args) {
-    return ['wpa_cli -i', interface, commandName]
-        .concat(args)
-        .join(' ');
+	return [ 'wpa_cli -i', interface, commandName ]
+		.concat(args)
+		.join(' ');
 }
 
 function exportCommand(commandName) {
-    module.exports[commandName] = function(interface, callback) {
-        var command = buildCommand(commandName, interface, []);
+	module.exports[commandName] = function (interface, callback) {
+		const command = buildCommand(commandName, interface, []);
 
-        return this.exec(command, parse_command_interface(callback));
-    }
+		return this.exec(command, parse_command_interface(callback));
+	};
 }
 
 commands = [
-    'reassociate',
-    'reattach',
-    'disconnect',
-    'reconnect',
-    'scan',
-    'reauthenticate',
-    'flush',
-    'save_config'
+	'reassociate',
+	'reattach',
+	'disconnect',
+	'reconnect',
+	'scan',
+	'reauthenticate',
+	'flush',
+	'save_config',
 ];
 
-for(var i in commands) {
-    exportCommand(commands[i]);
+for (var i in commands) {
+	exportCommand(commands[i]);
 }
 
 /**
@@ -85,62 +85,62 @@ for(var i in commands) {
  *
  */
 function parse_status_block(block) {
-    var match;
+	let match;
 
-    var parsed = {};
-    if ((match = block.match(/bssid=([A-Fa-f0-9:]{17})/))) {
-        parsed.bssid = match[1].toLowerCase();
-    }
+	const parsed = {};
+	if ((match = block.match(/bssid=([A-Fa-f0-9:]{17})/))) {
+		parsed.bssid = match[1].toLowerCase();
+	}
 
-    if ((match = block.match(/freq=([0-9]+)/))) {
-        parsed.frequency = parseInt(match[1], 10);
-    }
+	if ((match = block.match(/freq=([0-9]+)/))) {
+		parsed.frequency = parseInt(match[1], 10);
+	}
 
-    if ((match = block.match(/mode=([^\s]+)/))) {
-        parsed.mode = match[1];
-    }
+	if ((match = block.match(/mode=([^\s]+)/))) {
+		parsed.mode = match[1];
+	}
 
-    if ((match = block.match(/key_mgmt=([^\s]+)/))) {
-        parsed.key_mgmt = match[1].toLowerCase();
-    }
+	if ((match = block.match(/key_mgmt=([^\s]+)/))) {
+		parsed.key_mgmt = match[1].toLowerCase();
+	}
 
-    if ((match = block.match(/[^b]ssid=([^\n]+)/))) {
-        parsed.ssid = match[1];
-    }
+	if ((match = block.match(/[^b]ssid=([^\n]+)/))) {
+		parsed.ssid = match[1];
+	}
 
-    if ((match = block.match(/[^b]pairwise_cipher=([^\n]+)/))) {
-        parsed.pairwise_cipher = match[1];
-    }
+	if ((match = block.match(/[^b]pairwise_cipher=([^\n]+)/))) {
+		parsed.pairwise_cipher = match[1];
+	}
 
-    if ((match = block.match(/[^b]group_cipher=([^\n]+)/))) {
-        parsed.group_cipher = match[1];
-    }
+	if ((match = block.match(/[^b]group_cipher=([^\n]+)/))) {
+		parsed.group_cipher = match[1];
+	}
 
-    if ((match =  block.match(/p2p_device_address=([A-Fa-f0-9:]{17})/))) {
-        parsed.p2p_device_address = match[1];
-    }
+	if ((match =  block.match(/p2p_device_address=([A-Fa-f0-9:]{17})/))) {
+		parsed.p2p_device_address = match[1];
+	}
 
-    if ((match = block.match(/wpa_state=([^\s]+)/))) {
-        parsed.wpa_state = match[1];
-    }
+	if ((match = block.match(/wpa_state=([^\s]+)/))) {
+		parsed.wpa_state = match[1];
+	}
 
-    if ((match = block.match(/ip_address=([^\n]+)/))) {
-        parsed.ip = match[1];
-    }
+	if ((match = block.match(/ip_address=([^\n]+)/))) {
+		parsed.ip = match[1];
+	}
 
-    if ((match = block.match(/[^_]address=([A-Fa-f0-9:]{17})/))) {
-        parsed.mac = match[1].toLowerCase();
-    }
+	if ((match = block.match(/[^_]address=([A-Fa-f0-9:]{17})/))) {
+		parsed.mac = match[1].toLowerCase();
+	}
 
-    if ((match = block.match(/uuid=([^\n]+)/))) {
-        parsed.uuid = match[1];
-    }
+	if ((match = block.match(/uuid=([^\n]+)/))) {
+		parsed.uuid = match[1];
+	}
 
-    if ((match = block.match(/[^s]id=([0-9]+)/))) {
-        parsed.id = parseInt(match[1], 10);
-    }
+	if ((match = block.match(/[^s]id=([0-9]+)/))) {
+		parsed.id = parseInt(match[1], 10);
+	}
 
-    return parsed;
+	return parsed;
 }
 
 /**
@@ -154,13 +154,13 @@ function parse_status_block(block) {
  *
  */
 function parse_command_block(block) {
-    var match;
+	let match;
 
-    var parsed = {
-        result: block.match(/^([^\s]+)/)[1]
-    };
+	const parsed = {
+		result : block.match(/^([^\s]+)/)[1],
+	};
 
-    return parsed;
+	return parsed;
 }
 
 /**
@@ -173,13 +173,14 @@ function parse_command_block(block) {
  *
  */
 function parse_status_interface(callback) {
-    return function(error, stdout, stderr) {
-        if (error) {
-            callback(error);
-        } else {
-            callback(error, parse_status_block(stdout.trim()));
-        }
-    };
+	return function (error, stdout, stderr) {
+		if (error) {
+			callback(error);
+		}
+		else {
+			callback(error, parse_status_block(stdout.trim()));
+		}
+	};
 }
 
 /**
@@ -192,22 +193,24 @@ function parse_status_interface(callback) {
  *
  */
 function parse_command_interface(callback) {
-    return function(error, stdout, stderr) {
-        if (error) {
-            callback(error);
-        } else {
-            var output = parse_command_block(stdout.trim());
-            if (output.result === 'FAIL') {
-                callback(new Error(output.result));
-            } else {
-                callback(error, parse_command_block(stdout.trim()));
-            }
-        }
-    };
+	return function (error, stdout, stderr) {
+		if (error) {
+			callback(error);
+		}
+		else {
+			const output = parse_command_block(stdout.trim());
+			if (output.result === 'FAIL') {
+				callback(new Error(output.result));
+			}
+			else {
+				callback(error, parse_command_block(stdout.trim()));
+			}
+		}
+	};
 }
 
 function decodeUtf8(string) {
-  return Buffer.from(string, 'ascii').toString('utf8');
+	return Buffer.from(string, 'ascii').toString('utf8');
 }
 
 /**
@@ -220,39 +223,39 @@ function decodeUtf8(string) {
  * @returns {object} The parsed scan results.
  */
 function parse_scan_results(block) {
-    var match;
-    var results = [];
-    var lines;
+	let match;
+	const results = [];
+	let lines;
 
-    lines = block.split('\n').map(function(item) { return item + "\n"; });
-    lines.forEach(function(entry){
-        var parsed = {};
-        if ((match = entry.match(/([A-Fa-f0-9:]{17})\t/))) {
-            parsed.bssid = match[1].toLowerCase();
-        }
+	lines = block.split('\n').map((item) => item + '\n');
+	lines.forEach((entry) => {
+		const parsed = {};
+		if ((match = entry.match(/([A-Fa-f0-9:]{17})\t/))) {
+			parsed.bssid = match[1].toLowerCase();
+		}
 
-        if ((match = entry.match(/\t([\d]+)\t+/))) {
-            parsed.frequency = parseInt(match[1], 10);
-        }
+		if ((match = entry.match(/\t([\d]+)\t+/))) {
+			parsed.frequency = parseInt(match[1], 10);
+		}
 
-        if ((match = entry.match(/([-][0-9]+)\t/))) {
-            parsed.signalLevel = parseInt(match[1], 10);
-        }
+		if ((match = entry.match(/([-][0-9]+)\t/))) {
+			parsed.signalLevel = parseInt(match[1], 10);
+		}
 
-        if ((match = entry.match(/\t(\[.+\])\t/))) {
-            parsed.flags = match[1];
-        }
+		if ((match = entry.match(/\t(\[.+\])\t/))) {
+			parsed.flags = match[1];
+		}
 
-        if ((match = entry.match(/\t([^\t]{1,32}(?=\n))/))) {
-            parsed.ssid = decodeUtf8(match[1]);
-        }
+		if ((match = entry.match(/\t([^\t]{1,32}(?=\n))/))) {
+			parsed.ssid = decodeUtf8(match[1]);
+		}
 
-        if(!(Object.keys(parsed).length === 0 && parsed.constructor === Object)){
-            results.push(parsed);
-        }
-    });
+		if (!(Object.keys(parsed).length === 0 && parsed.constructor === Object)) {
+			results.push(parsed);
+		}
+	});
 
-    return results;
+	return results;
 }
 
 /**
@@ -265,13 +268,14 @@ function parse_scan_results(block) {
  *
  */
 function parse_scan_results_interface(callback) {
-    return function(error, stdout, stderr) {
-        if (error) {
-            callback(error);
-        } else {
-            callback(error, parse_scan_results(stdout.trim()));
-        }
-    };
+	return function (error, stdout, stderr) {
+		if (error) {
+			callback(error);
+		}
+		else {
+			callback(error, parse_scan_results(stdout.trim()));
+		}
+	};
 }
 
 
@@ -329,13 +333,13 @@ function parse_scan_results_interface(callback) {
  *
  */
 function status(interface, callback) {
-    var command = [ 'wpa_cli -i', interface, 'status'].join(' ');
-    return this.exec(command, parse_status_interface(callback));
+	const command = [ 'wpa_cli -i', interface, 'status' ].join(' ');
+	return this.exec(command, parse_status_interface(callback));
 }
 
 function bssid(interface, ap, ssid, callback) {
-    var command = ['wpa_cli -i', interface, 'bssid', ssid, ap].join(' ');
-    return this.exec(command, parse_command_interface(callback));
+	const command = [ 'wpa_cli -i', interface, 'bssid', ssid, ap ].join(' ');
+	return this.exec(command, parse_command_interface(callback));
 }
 
 /* others commands not tested
@@ -350,78 +354,78 @@ function bssid(interface, ap, ssid, callback) {
 */
 
 function set(interface, variable, value, callback) {
-    var command = ['wpa_cli -i',
-                 interface,
-                 'set',
-                 variable,
-                 value ].join(' ');
+	const command = [ 'wpa_cli -i',
+		interface,
+		'set',
+		variable,
+		value ].join(' ');
 
-    return this.exec(command, parse_command_interface(callback));
+	return this.exec(command, parse_command_interface(callback));
 }
 
 function add_network(interface, callback) {
-    var command = ['wpa_cli -i',
-                 interface,
-                 'add_network' ].join(' ');
+	const command = [ 'wpa_cli -i',
+		interface,
+		'add_network' ].join(' ');
 
-    return this.exec(command, parse_command_interface(callback));
+	return this.exec(command, parse_command_interface(callback));
 }
 
 function set_network(interface, id, variable, value, callback) {
-    if (typeof value === 'string') {
-        value = '\\"'+value+'\\"'
-    }
+	if (typeof value === 'string') {
+		value = '\\"' + value + '\\"';
+	}
 
-    var command = ['wpa_cli -i',
-                 interface,
-                 'set_network',
-                 id,
-                 variable,
-                 value ].join(' ');
+	const command = [ 'wpa_cli -i',
+		interface,
+		'set_network',
+		id,
+		variable,
+		value ].join(' ');
 
-    return this.exec(command, parse_command_interface(callback));
+	return this.exec(command, parse_command_interface(callback));
 }
 
 function enable_network(interface, id, callback) {
-    var command = ['wpa_cli -i',
-                 interface,
-                 'enable_network',
-                 id ].join(' ');
+	const command = [ 'wpa_cli -i',
+		interface,
+		'enable_network',
+		id ].join(' ');
 
-    return this.exec(command, parse_command_interface(callback));
+	return this.exec(command, parse_command_interface(callback));
 }
 
 function disable_network(interface, id, callback) {
-    var command = ['wpa_cli -i',
-                 interface,
-                 'disable_network',
-                 id ].join(' ');
+	const command = [ 'wpa_cli -i',
+		interface,
+		'disable_network',
+		id ].join(' ');
 
-    return this.exec(command, parse_command_interface(callback));
+	return this.exec(command, parse_command_interface(callback));
 }
 
 function remove_network(interface, id, callback) {
-    var command = ['wpa_cli -i',
-                 interface,
-                 'remove_network',
-                 id ].join(' ');
+	const command = [ 'wpa_cli -i',
+		interface,
+		'remove_network',
+		id ].join(' ');
 
-    return this.exec(command, parse_command_interface(callback));
+	return this.exec(command, parse_command_interface(callback));
 }
 
 function select_network(interface, id, callback) {
-    var command = ['wpa_cli -i',
-        interface,
-        'select_network',
-        id ].join(' ');
+	const command = [ 'wpa_cli -i',
+		interface,
+		'select_network',
+		id ].join(' ');
 
-    return this.exec(command, parse_command_interface(callback));
+	return this.exec(command, parse_command_interface(callback));
 }
 
 function scan_results(interface, callback) {
-    var command = ['wpa_cli -i',
-        interface,
-        'scan_results'].join(' ');
+	const command = [ 'wpa_cli -i',
+		interface,
+		'scan_results' ].join(' ');
 
-    return this.exec(command, parse_scan_results_interface(callback));
+	return this.exec(command, parse_scan_results_interface(callback));
 }

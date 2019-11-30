@@ -31,10 +31,10 @@ var child_process = require('child_process');
  *
  */
 var ifconfig = module.exports = {
-  exec: child_process.exec,
-  status: status,
-  down: down,
-  up: up
+	exec : child_process.exec,
+	status,
+	down,
+	up,
 };
 
 /**
@@ -48,85 +48,85 @@ var ifconfig = module.exports = {
  *
  */
 function parse_status_block(block) {
-  var match;
+	let match;
 
-  var parsed = {
-    interface: block.match(/^([^\s^\:]+)/)[1]
-  };
+	const parsed = {
+		interface : block.match(/^([^\s^\:]+)/)[1],
+	};
 
-  if ((match = block.match(/Link encap:\s*([^\s]+)/))) {
-    parsed.link = match[1].toLowerCase();
-  }
+	if ((match = block.match(/Link encap:\s*([^\s]+)/))) {
+		parsed.link = match[1].toLowerCase();
+	}
 
-  if (!parsed.link && (match = block.match(/ether[^\(]*\(([^\s]+)\)/))) {
-    parsed.link = match[1].toLowerCase();
-  }
+	if (!parsed.link && (match = block.match(/ether[^\(]*\(([^\s]+)\)/))) {
+		parsed.link = match[1].toLowerCase();
+	}
 
-  if (!parsed.link && (match = block.match(/loop[^\(]*\(([^\s]+)/))) {
-    parsed.link = match[1].toLowerCase();
-  }
+	if (!parsed.link && (match = block.match(/loop[^\(]*\(([^\s]+)/))) {
+		parsed.link = match[1].toLowerCase();
+	}
 
-  if ((match = block.match(/HWaddr\s+([^\s]+)/))) {
-    parsed.address = match[1].toLowerCase();
-  }
+	if ((match = block.match(/HWaddr\s+([^\s]+)/))) {
+		parsed.address = match[1].toLowerCase();
+	}
 
-  if (!parsed.address && (match = block.match(/ether\s*([^\s]+)/))) {
-    parsed.address = match[1].toLowerCase();
-  }
+	if (!parsed.address && (match = block.match(/ether\s*([^\s]+)/))) {
+		parsed.address = match[1].toLowerCase();
+	}
 
-  if ((match = block.match(/inet6\s+addr:\s*([^\s]+)/))) {
-    parsed.ipv6_address = match[1];
-  }
+	if ((match = block.match(/inet6\s+addr:\s*([^\s]+)/))) {
+		parsed.ipv6_address = match[1];
+	}
 
-  if (!parsed.address && (match = block.match(/ether\s*([^\s]+)/))) {
-    parsed.address = match[1].toLowerCase();
-  }
+	if (!parsed.address && (match = block.match(/ether\s*([^\s]+)/))) {
+		parsed.address = match[1].toLowerCase();
+	}
 
-  if ((match = block.match(/inet\s+addr:\s*([^\s]+)/))) {
-    parsed.ipv4_address = match[1];
-  }
+	if ((match = block.match(/inet\s+addr:\s*([^\s]+)/))) {
+		parsed.ipv4_address = match[1];
+	}
 
-  if (!parsed.ipv4_address && (match = block.match(/inet\s+([^\s]+)/))) {
-    parsed.ipv4_address = match[1];
-  }
+	if (!parsed.ipv4_address && (match = block.match(/inet\s+([^\s]+)/))) {
+		parsed.ipv4_address = match[1];
+	}
 
-  if ((match = block.match(/Bcast:\s*([^\s]+)/))) {
-    parsed.ipv4_broadcast = match[1];
-  }
+	if ((match = block.match(/Bcast:\s*([^\s]+)/))) {
+		parsed.ipv4_broadcast = match[1];
+	}
 
-   if (!parsed.ipv4_broadcast && (match = block.match(/broadcast\s*([^\s]+)/))) {
-    parsed.ipv4_broadcast = match[1];
-  }
+	if (!parsed.ipv4_broadcast && (match = block.match(/broadcast\s*([^\s]+)/))) {
+		parsed.ipv4_broadcast = match[1];
+	}
 
-  if ((match = block.match(/Mask:\s*([^\s]+)/))) {
-    parsed.ipv4_subnet_mask = match[1];
-  }
+	if ((match = block.match(/Mask:\s*([^\s]+)/))) {
+		parsed.ipv4_subnet_mask = match[1];
+	}
 
-  if (!parsed.ipv4_subnet_mask && (match = block.match(/netmask\s*([^\s]+)/))) {
-    parsed.ipv4_subnet_mask = match[1];
-  }
+	if (!parsed.ipv4_subnet_mask && (match = block.match(/netmask\s*([^\s]+)/))) {
+		parsed.ipv4_subnet_mask = match[1];
+	}
 
-  if ((match = block.match(/UP/))) {
-    parsed.up = true;
-  }
+	if ((match = block.match(/UP/))) {
+		parsed.up = true;
+	}
 
-  if ((match = block.match(/BROADCAST/))) {
-    parsed.broadcast = true;
-  }
+	if ((match = block.match(/BROADCAST/))) {
+		parsed.broadcast = true;
+	}
 
-  if ((match = block.match(/RUNNING/))) {
-    parsed.running = true;
-  }
+	if ((match = block.match(/RUNNING/))) {
+		parsed.running = true;
+	}
 
-  if ((match = block.match(/MULTICAST/))) {
-    parsed.multicast = true;
-  }
+	if ((match = block.match(/MULTICAST/))) {
+		parsed.multicast = true;
+	}
 
-  if ((match = block.match(/LOOPBACK/))) {
-    parsed.loopback = true;
-  }
+	if ((match = block.match(/LOOPBACK/))) {
+		parsed.loopback = true;
+	}
 
-  return parsed;
+	return parsed;
 }
 
 /**
@@ -139,11 +139,13 @@ function parse_status_block(block) {
  *
  */
 function parse_status(callback) {
-  return function(error, stdout, stderr) {
-    if (error) callback(error);
-    else callback(error,
-      stdout.trim().split('\n\n').map(parse_status_block));
-  };
+	return function (error, stdout, stderr) {
+		if (error) callback(error);
+		else {
+			callback(error,
+				stdout.trim().split('\n\n').map(parse_status_block));
+		}
+	};
 }
 
 /**
@@ -156,10 +158,10 @@ function parse_status(callback) {
  *
  */
 function parse_status_interface(callback) {
-  return function(error, stdout, stderr) {
-    if (error) callback(error);
-    else callback(error, parse_status_block(stdout.trim()));
-  };
+	return function (error, stdout, stderr) {
+		if (error) callback(error);
+		else callback(error, parse_status_block(stdout.trim()));
+	};
 }
 
 /**
@@ -216,12 +218,12 @@ function parse_status_interface(callback) {
  *
  */
 function status(interface, callback) {
-  if (callback) {
-    this.exec('ifconfig ' + interface, parse_status_interface(callback));  
-  }
-  else {
-    this.exec('ifconfig -a', parse_status(interface));  
-  }
+	if (callback) {
+		this.exec('ifconfig ' + interface, parse_status_interface(callback));
+	}
+	else {
+		this.exec('ifconfig -a', parse_status(interface));
+	}
 }
 
 /**
@@ -242,7 +244,7 @@ function status(interface, callback) {
  *
  */
 function down(interface, callback) {
-  return this.exec('ifconfig ' + interface + ' down', callback);
+	return this.exec('ifconfig ' + interface + ' down', callback);
 }
 
 /**
@@ -264,14 +266,10 @@ function down(interface, callback) {
  * };
  *
  * ifconfig.up(options, function(err) {
- *   // the interface is up 
+ *   // the interface is up
  * });
  *
  */
 function up(options, callback) {
-  return this.exec('ifconfig ' + options.interface +
-    ' ' + options.ipv4_address +
-    ' netmask ' + options.ipv4_subnet_mask +
-    ' broadcast ' + options.ipv4_broadcast +
-    ' up', callback);
+	return this.exec('ifconfig ' + options.interface +    ' ' + options.ipv4_address +    ' netmask ' + options.ipv4_subnet_mask +    ' broadcast ' + options.ipv4_broadcast +    ' up', callback);
 }

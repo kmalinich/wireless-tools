@@ -31,8 +31,8 @@ var child_process = require('child_process');
  *
  */
 var iwconfig = module.exports = {
-  exec: child_process.exec,
-  status: status
+	exec : child_process.exec,
+	status,
 };
 
 /**
@@ -46,60 +46,60 @@ var iwconfig = module.exports = {
  *
  */
 function parse_status_block(block) {
-  var match;
+	let match;
 
-  // Skip out of the block is invalid
-  if (!block) return;
+	// Skip out of the block is invalid
+	if (!block) return;
 
-  var parsed = {
-    interface: block.match(/^([^\s]+)/)[1]
-  };
+	const parsed = {
+		interface : block.match(/^([^\s]+)/)[1],
+	};
 
-  if ((match = block.match(/Access Point:\s*([A-Fa-f0-9:]{17})/))) {
-    parsed.access_point = match[1].toLowerCase();
-  }
+	if ((match = block.match(/Access Point:\s*([A-Fa-f0-9:]{17})/))) {
+		parsed.access_point = match[1].toLowerCase();
+	}
 
-  if ((match = block.match(/Frequency[:|=]\s*([0-9\.]+)/))) {
-    parsed.frequency = parseFloat(match[1]);
-  }
+	if ((match = block.match(/Frequency[:|=]\s*([0-9\.]+)/))) {
+		parsed.frequency = parseFloat(match[1]);
+	}
 
-  if ((match = block.match(/Bit Rate[:|=]\s*([0-9\.]+)/))) {
-    parsed.bitrate = parseFloat(match[1]);
-  }
+	if ((match = block.match(/Bit Rate[:|=]\s*([0-9\.]+)/))) {
+		parsed.bitrate = parseFloat(match[1]);
+	}
 
-  if ((match = block.match(/IEEE\s*([^\s]+)/))) {
-    parsed.ieee = match[1].toLowerCase();
-  }
+	if ((match = block.match(/IEEE\s*([^\s]+)/))) {
+		parsed.ieee = match[1].toLowerCase();
+	}
 
-  if ((match = block.match(/Mode[:|=]\s*([^\s]+)/))) {
-    parsed.mode = match[1].toLowerCase();
-  }
+	if ((match = block.match(/Mode[:|=]\s*([^\s]+)/))) {
+		parsed.mode = match[1].toLowerCase();
+	}
 
-  if ((match = block.match(/Noise level[:|=]\s*(-?[0-9]+)/))) {
-    parsed.noise = parseInt(match[1], 10);
-  }
+	if ((match = block.match(/Noise level[:|=]\s*(-?[0-9]+)/))) {
+		parsed.noise = parseInt(match[1], 10);
+	}
 
-  if ((match = block.match(/Link Quality[:|=]\s*([0-9]+)/))) {
-    parsed.quality = parseInt(match[1], 10);
-  }
+	if ((match = block.match(/Link Quality[:|=]\s*([0-9]+)/))) {
+		parsed.quality = parseInt(match[1], 10);
+	}
 
-  if ((match = block.match(/Sensitivity[:|=]\s*([0-9]+)/))) {
-    parsed.sensitivity = parseInt(match[1], 10);
-  }
+	if ((match = block.match(/Sensitivity[:|=]\s*([0-9]+)/))) {
+		parsed.sensitivity = parseInt(match[1], 10);
+	}
 
-  if ((match = block.match(/Signal level[:|=]\s*(-?[0-9]+)/))) {
-    parsed.signal = parseInt(match[1], 10);
-  }
+	if ((match = block.match(/Signal level[:|=]\s*(-?[0-9]+)/))) {
+		parsed.signal = parseInt(match[1], 10);
+	}
 
-  if ((match = block.match(/ESSID[:|=]\s*"([^"]+)"/))) {
-    parsed.ssid = match[1];
-  }
+	if ((match = block.match(/ESSID[:|=]\s*"([^"]+)"/))) {
+		parsed.ssid = match[1];
+	}
 
-  if ((match = block.match(/unassociated/))) {
-    parsed.unassociated = true;
-  }
+	if ((match = block.match(/unassociated/))) {
+		parsed.unassociated = true;
+	}
 
-  return parsed;
+	return parsed;
 }
 
 /**
@@ -112,11 +112,15 @@ function parse_status_block(block) {
  *
  */
 function parse_status(callback) {
-  return function(error, stdout, stderr) {
-    if (error) callback(error);
-    else callback(error,
-      stdout.trim().replace(/ {10,}/g, '').split('\n\n').map(parse_status_block).filter(function(i) { return !! i }));
-  };
+	return function (error, stdout, stderr) {
+		if (error) callback(error);
+		else {
+			callback(error,
+				stdout.trim().replace(/ {10,}/g, '').split('\n\n')
+					.map(parse_status_block)
+					.filter((i) => !!i));
+		}
+	};
 }
 
 /**
@@ -129,10 +133,10 @@ function parse_status(callback) {
  *
  */
 function parse_status_interface(callback) {
-  return function(error, stdout, stderr) {
-    if (error) callback(error);
-    else callback(error, parse_status_block(stdout.trim()));
-  };
+	return function (error, stdout, stderr) {
+		if (error) callback(error);
+		else callback(error, parse_status_block(stdout.trim()));
+	};
 }
 
 /**
@@ -179,11 +183,10 @@ function parse_status_interface(callback) {
  *
  */
 function status(interface, callback) {
-  if (callback) {
-    return this.exec('iwconfig ' + interface,
-      parse_status_interface(callback));
-  }
-  else {
-    return this.exec('iwconfig', parse_status(interface));
-  }
+	if (callback) {
+		return this.exec('iwconfig ' + interface,
+			parse_status_interface(callback));
+	}
+
+	return this.exec('iwconfig', parse_status(interface));
 }
