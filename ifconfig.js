@@ -142,8 +142,7 @@ function parse_status(callback) {
 	return function (error, stdout) {
 		if (error) callback(error);
 		else {
-			callback(error,
-				stdout.trim().split('\n\n').map(parse_status_block));
+			callback(error, stdout.trim().split('\n\n').map(parse_status_block));
 		}
 	};
 }
