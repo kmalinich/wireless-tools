@@ -110,28 +110,17 @@ function parse_status_block(block) {
 
 /**
  * Parses the status for all wireless NICs
- *
- * @private
- * @static
- * @category iwconfig
- * @param {function} callback The callback function
  */
-function parse_status(callback) {
+function parse_status() {
 	return function (error, stdout) {
-		if (error) callback(error);
-		else {
-			callback(error, stdout.trim().replace(/ {10,}/g, '').split('\n\n').map(parse_status_block).filter((i) => !!i));
-		}
+		if (error) return error;
+
+		return stdout.trim().replace(/ {10,}/g, '').split('\n\n').map(parse_status_block).filter((i) => !!i);
 	};
 }
 
 /**
  * Parses the status for a single wireless NIC
- *
- * @private
- * @static
- * @category iwconfig
- * @param {function} callback The callback function
  */
 function parse_status_nic(callback) {
 	return function (error, stdout) {
