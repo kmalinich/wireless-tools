@@ -20,3 +20,5 @@ wt.iwconfig.status((error, status) => {
 
 	console.log('iwconfig status: %o', status);
 });
+
+console.dir(wt.iwconfig.status())
