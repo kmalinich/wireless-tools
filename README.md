@@ -67,7 +67,7 @@ const options = {
 	wpa_passphrase : 'raspberry'
 };
 
-wt.hostapd.enable(options, err => {
+wt.hostapd.enable(options, error => {
 	// the access point was created
 });
 ```
@@ -78,7 +78,7 @@ The **hostapd disable** command is used to stop hosting an access point on a spe
 ``` javascript
 const wt = require('wireless-tools');
 
-wt.hostapd.disable('wlan0', err => {
+wt.hostapd.disable('wlan0', error => {
 	// no longer hosting the access point
 });
 ```
@@ -92,7 +92,7 @@ The **ifconfig status** command is used to query the status of all configured in
 ``` javascript
 const wt = require('wireless-tools');
 
-wt.ifconfig.status(error, status) => {
+wt.ifconfig.status((error, status) => {
 	console.log(status);
 });
 
@@ -162,7 +162,7 @@ The **ifconfig down** command is used to take down an interface that is up.
 ``` javascript
 const wt = require('wireless-tools');
 
-wt.ifconfig.down('wlan0', err => {
+wt.ifconfig.down('wlan0', error => {
 	// the interface is down
 });
 ```
@@ -180,7 +180,7 @@ const options = {
 	ipv4_subnet_mask: '255.255.255.0'
 };
 
-wt.ifconfig.up(options, err => {
+wt.ifconfig.up(options, error => {
 	// the interface is up
 });
 ```
@@ -194,7 +194,7 @@ The **iwconfig status** command is used to query the status of all configured wi
 ``` javascript
 const wt = require('wireless-tools');
 
-wt.iwconfig.status(error, status) => {
+wt.iwconfig.status((error, status) => {
 	console.log(status);
 });
 
@@ -374,7 +374,7 @@ const options = {
 	interface: 'wlan0'
 };
 
-wt.udhcpc.enable(options, err => {
+wt.udhcpc.enable(options, error => {
 	// the dhcp client was started
 });
 ```
@@ -385,7 +385,7 @@ The **udhcpc disable** command is used to stop a dhcp client on a specific netwo
 ``` javascript
 const wt = require('wireless-tools');
 
-wt.udhcpc.disable('wlan0', err => {
+wt.udhcpc.disable('wlan0', error => {
 	// the dhcp client was stopped
 });
 ```
@@ -411,7 +411,7 @@ const options = {
 	}
 };
 
-wt.udhcpd.enable(options, err => {
+wt.udhcpd.enable(options, error => {
 	// the dhcp server was started
 });
 ```
@@ -422,7 +422,7 @@ The **udhcpd disable** command is used to stop a dhcp server on a specific netwo
 ``` javascript
 const wt = require('wireless-tools');
 
-wt.udhcpd.disable('wlan0', err => {
+wt.udhcpd.disable('wlan0', error => {
 	// the dhcp server was stopped
 });
 ```
@@ -610,7 +610,7 @@ const options = {
 	driver: 'wext'
 };
 
-wt.wpa_supplicant.enable(options, err => {
+wt.wpa_supplicant.enable(options, error => {
 	// connected to the wireless network
 });
 ```
@@ -621,7 +621,7 @@ The **wpa_supplicant disable** command is used to disconnect from a wireless net
 ``` javascript
 const wt = require('wireless-tools');
 
-wt.wpa_supplicant.disable('wlan0', err => {
+wt.wpa_supplicant.disable('wlan0', error => {
 	// disconnected from wireless network
 });
 ```
@@ -637,7 +637,7 @@ const options = {
 	drivers   : [ 'nl80211', 'wext' ]
 };
 
-wt.wpa_supplicant.manual(options, err => {
+wt.wpa_supplicant.manual(options, error => {
 	// wpa_supplicant launched on wlan0 interface (can be setup using wpa_cli)
 });
 ```
