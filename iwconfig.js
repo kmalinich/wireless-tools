@@ -131,12 +131,6 @@ function parse_status_nic(callback) {
 
 /**
  * Parses the status for a single wireless NIC
- *
- * @private
- * @static
- * @category iwconfig
- * @param {string} [nic] The wireless NIC
- * @param {function} callback The callback function
  */
 function status(nic, callback) {
 	if (callback) return this.exec('iwconfig ' + nic, parse_status_nic(callback));
@@ -147,9 +141,6 @@ function status(nic, callback) {
 
 /**
  * The **iwconfig** command is used to configure wireless NICs
- *
- * @private
- * @category iwconfig
  */
 module.exports = {
 	exec : child_process.exec,
