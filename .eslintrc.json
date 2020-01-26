@@ -52,6 +52,7 @@
 			}
 		],
 		"camelcase": "off",
+		"class-methods-use-this": "off",
 		"comma-dangle": [
 			"error",
 			{
@@ -107,14 +108,14 @@
 		"import/no-nodejs-modules": "off",
 		"import/no-webpack-loader-syntax": "error",
 		"indent": [
-			"warn",
+			"error",
 			"tab",
 			{
 				"SwitchCase": 1
 			}
 		],
 		"key-spacing": [
-			"warn",
+			"error",
 			{
 				"afterColon": true,
 				"align": {
@@ -124,7 +125,7 @@
 					"on": "colon"
 				},
 				"beforeColon": true,
-				"mode": "strict"
+				"mode": "minimum"
 			}
 		],
 		"keyword-spacing": [
@@ -140,12 +141,7 @@
 		],
 		"new-cap": "off",
 		"new-parens": "error",
-		"newline-per-chained-call": [
-			"warn",
-			{
-				"ignoreChainWithDepth": 3
-			}
-		],
+		"newline-per-chained-call": "off",
 		"no-array-constructor": "error",
 		"no-caller": "error",
 		"no-class-assign": "error",
@@ -181,7 +177,6 @@
 		"no-floating-decimal": "error",
 		"no-func-assign": "error",
 		"no-global-assign": "error",
-		"no-implicit-globals": "off",
 		"no-implied-eval": "error",
 		"no-inner-declarations": [
 			"error",
@@ -315,11 +310,19 @@
 		],
 		"one-var": [
 			"error",
-			"never"
+			{
+				"initialized": "never"
+			}
 		],
 		"operator-linebreak": [
 			"error",
-			"none"
+			"after",
+			{
+				"overrides": {
+					":": "before",
+					"?": "before"
+				}
+			}
 		],
 		"padded-blocks": [
 			"error",
@@ -332,7 +335,7 @@
 		"prefer-promise-reject-errors": "error",
 		"promise/param-names": "error",
 		"quotes": [
-			"warn",
+			"error",
 			"single",
 			{
 				"allowTemplateLiterals": true,
@@ -344,7 +347,7 @@
 			"never"
 		],
 		"semi": [
-			"warn",
+			"error",
 			"always"
 		],
 		"semi-spacing": [
@@ -455,9 +458,7 @@
 		"import/resolver": {
 			"node": {
 				"moduleDirectory": [
-					"node_modules",
-					"lib/",
-					"share/"
+					"node_modules"
 				]
 			}
 		}

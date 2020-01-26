@@ -1,7 +1,7 @@
 {
 	"author": "Christopher M. Baker",
 	"bugs": {
-		"url": "https://github.com/bakerface/wireless-tools/issues"
+		"url": "https://github.com/kmalinich/wireless-tools/issues"
 	},
 	"contributors": [
 		{
@@ -13,17 +13,19 @@
 			"email": "support@wink.com",
 			"name": "Wink",
 			"url": "https://www.wink.com/"
+		},
+		{
+			"email": "kennygprs@gmail.com",
+			"name": "kdm",
+			"url": "https://github.com/kmalinich"
 		}
 	],
 	"description": "Wireless tools for Node.js",
-	"devDependencies": {
-		"codeclimate-test-reporter": "^0.5.1",
-		"istanbul": "^0.4.5",
-		"mocha": "^6.2.2",
-		"should": "^13.2.3",
-		"xo": "^0.25.3"
+	"devDependencies": {},
+	"engines": {
+		"node": ">=12"
 	},
-	"homepage": "https://github.com/bakerface/wireless-tools",
+	"homepage": "https://github.com/kmalinich/wireless-tools#readme",
 	"keywords": [
 		"wireless",
 		"tools",
@@ -39,17 +41,12 @@
 	"license": "MIT",
 	"main": "index.js",
 	"name": "wireless-tools",
+	"optionalDependencies": {},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/bakerface/wireless-tools.git"
+		"url": "https://github.com/kmalinich/wireless-tools.git"
 	},
-	"scripts": {
-		"codeclimate": "codeclimate-test-reporter < coverage/lcov.info",
-		"posttest": "istanbul check-coverage --statements 100 --functions 100 --branches 100 --lines 100",
-		"test": "istanbul cover node_modules/.bin/_mocha"
-	},
-	"version": "0.19.0",
-	"xo": {
-		"space": true
-	}
+	"scripts": {},
+	"type": "script",
+	"version": "0.20.0"
 }

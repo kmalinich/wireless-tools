@@ -1,21 +1,22 @@
 #!/usr/bin/env node
 
-const wtools = require('./');
+const wt = require('./');
 
-wtools.ifconfig.status('wlan0', (error, status) => {
+
+wt.ifconfig.status((error, status) => {
 	if (error) {
-		console.error(error);
+		console.error('ifconfig error: %o', error);
 		return;
 	}
 
-	console.log(status);
+	console.log('ifconfig status: %o', status);
 });
 
-wtools.iwconfig.status('wlan0', (error, status) => {
+wt.iwconfig.status((error, status) => {
 	if (error) {
-		console.error(error);
+		console.error('iwconfig error: %o', error);
 		return;
 	}
 
-	console.log(status);
+	console.log('iwconfig status: %o', status);
 });

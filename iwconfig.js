@@ -24,7 +24,7 @@
 const child_process = require('child_process');
 
 /**
- * The **iwconfig** command is used to configure wireless network interfaces.
+ * The **iwconfig** command is used to configure wireless NICs
  *
  * @private
  * @category iwconfig
@@ -82,14 +82,15 @@ function freq2channel(freq) {
 	}
 }
 
+
 /**
- * Parses the status for a single wireless network interface.
- *
+ * Parses the status for a single wireless NIC
+ * *
  * @private
  * @static
  * @category iwconfig
- * @param {string} block The section of stdout for the interface.
- * @returns {object} The parsed wireless network interface status.
+ * @param {string} block The section of stdout for the NIC
+ * @returns {object} The parsed wireless NIC status
  *
  */
 function parse_status_block(block) {
@@ -99,7 +100,7 @@ function parse_status_block(block) {
 	if (!block) return;
 
 	const parsed = {
-		interface : block.match(/^([^\s]+)/)[1],
+		nic : block.match(/^([^\s]+)/)[1],
 	};
 
 	if ((match = block.match(/Access Point:\s*([A-Fa-f0-9:]{17})/))) parsed.access_point     = match[1].toLowerCase();
@@ -121,35 +122,33 @@ function parse_status_block(block) {
 }
 
 /**
- * Parses the status for all wireless network interfaces.
+ * Parses the status for all wireless NICs
  *
  * @private
  * @static
  * @category iwconfig
- * @param {function} callback The callback function.
+ * @param {function} callback The callback function
  *
  */
 function parse_status(callback) {
 	return function (error, stdout) {
 		if (error) callback(error);
 		else {
-			callback(error, stdout.trim().replace(/ {10,}/g, '').split('\n\n')
-				.map(parse_status_block)
-				.filter((i) => !!i));
+			callback(error, stdout.trim().replace(/ {10,}/g, '').split('\n\n').map(parse_status_block).filter((i) => !!i));
 		}
 	};
 }
 
 /**
- * Parses the status for a single wireless network interface.
+ * Parses the status for a single wireless NIC
  *
  * @private
  * @static
  * @category iwconfig
- * @param {function} callback The callback function.
+ * @param {function} callback The callback function
  *
  */
-function parse_status_interface(callback) {
+function parse_status_nic(callback) {
 	return function (error, stdout) {
 		if (error) callback(error);
 		else callback(error, parse_status_block(stdout.trim()));
@@ -157,25 +156,29 @@ function parse_status_interface(callback) {
 }
 
 /**
- * Parses the status for a single wireless network interface.
+ * Parses the status for a single wireless NIC
  *
  * @private
  * @static
  * @category iwconfig
- * @param {string} [interface] The wireless network interface.
- * @param {function} callback The callback function.
+ * @param {string} [nic] The wireless NIC
+ * @param {function} callback The callback function
  * @example
  *
- * var iwconfig = require('wireless-tools/iwconfig');
+ * const wt = require('wireless-tools');
  *
- * iwconfig.status(function(err, status) {
- *   console.log(status);
+ * wt.iwconfig.status((error, status) => {
+ *   if (error) {
+ *     console.error('Error: %o', error);
+ *     return;
+ *   }
+ *
+ *   console.log('Status: %o', status);
  * });
  *
- * // =>
  * [
  *   {
- *     interface: 'wlan0',
+ *     nic: 'wlan0',
  *     access_point: '00:0b:81:95:12:21',
  *     frequency: 2.437,
  *     ieee: '802.11bg',
@@ -187,7 +190,7 @@ function parse_status_interface(callback) {
  *     ssid: 'RaspberryPi'
  *   },
  *   {
- *     interface: 'wlan1',
+ *     nic: 'wlan1',
  *     frequency: 2.412,
  *     mode: 'auto',
  *     noise: 0,
@@ -199,11 +202,8 @@ function parse_status_interface(callback) {
  * ]
  *
  */
-function status(interface, callback) {
-	if (callback) {
-		return this.exec('iwconfig ' + interface,
-			parse_status_interface(callback));
-	}
+function status(nic, callback) {
+	if (callback) return this.exec('iwconfig ' + nic, parse_status_nic(callback));
 
-	return this.exec('iwconfig', parse_status(interface));
+	return this.exec('iwconfig', parse_status(nic));
 }
