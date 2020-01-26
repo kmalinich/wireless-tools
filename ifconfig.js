@@ -23,35 +23,21 @@
 
 const child_process = require('child_process');
 
-/**
- * The **ifconfig** command is used to configure network interfaces.
- *
- * @static
- * @category ifconfig
- *
- */
-module.exports = {
-	exec : child_process.exec,
-	status,
-	down,
-	up,
-};
 
 /**
- * Parses the status for a single network interface.
+ * Parses the status for a single NIC
  *
  * @private
  * @static
  * @category ifconfig
- * @param {string} block The section of stdout for the interface.
- * @returns {object} The parsed network interface status.
- *
+ * @param {string} block The section of stdout for the NIC
+ * @returns {object} The parsed NIC status
  */
 function parse_status_block(block) {
 	let match;
 
 	const parsed = {
-		interface : block.match(/^([^\s^:]+)/)[1],
+		nic : block.match(/^([^\s^:]+)/)[1],
 	};
 
 	if ((match = block.match(/Link encap:\s*([^\s]+)/))) {
@@ -106,169 +92,101 @@ function parse_status_block(block) {
 		parsed.ipv4_subnet_mask = match[1];
 	}
 
-	if ((match = block.match(/UP/))) {
-		parsed.up = true;
-	}
-
-	if ((match = block.match(/BROADCAST/))) {
-		parsed.broadcast = true;
-	}
-
-	if ((match = block.match(/RUNNING/))) {
-		parsed.running = true;
-	}
-
-	if ((match = block.match(/MULTICAST/))) {
-		parsed.multicast = true;
-	}
-
-	if ((match = block.match(/LOOPBACK/))) {
-		parsed.loopback = true;
-	}
+	if ((match = block.match(/BROADCAST/))) parsed.broadcast = true;
+	if ((match = block.match(/LOOPBACK/)))  parsed.loopback  = true;
+	if ((match = block.match(/MULTICAST/))) parsed.multicast = true;
+	if ((match = block.match(/RUNNING/)))   parsed.running   = true;
+	if ((match = block.match(/UP/)))        parsed.up        = true;
 
 	return parsed;
 }
 
 /**
- * Parses the status for all network interfaces.
+ * Parses the status for all NICs
  *
  * @private
  * @static
  * @category ifconfig
- * @param {function} callback The callback function.
- *
+ * @param {function} callback The callback function
  */
 function parse_status(callback) {
 	return function (error, stdout) {
-		if (error) callback(error);
-		else {
-			callback(error, stdout.trim().split('\n\n').map(parse_status_block));
-		}
+		if (error) { callback(error); return; }
+
+		callback(error, stdout.trim().split('\n\n').map(parse_status_block));
 	};
 }
 
 /**
- * Parses the status for a single network interface.
+ * Parses the status for a single NIC
  *
  * @private
  * @static
  * @category ifconfig
- * @param {function} callback The callback function.
- *
+ * @param {function} callback The callback function
  */
-function parse_status_interface(callback) {
+function parse_status_nic(callback) {
 	return function (error, stdout) {
-		if (error) callback(error);
-		else callback(error, parse_status_block(stdout.trim()));
+		if (error) { callback(error); return; }
+
+		callback(error, parse_status_block(stdout.trim()));
 	};
 }
 
 /**
- * The **ifconfig status** command is used to query the status of all
- * configured interfaces.
+ * The **ifconfig status** command is used to query the status of all configured NICs
  *
  * @static
  * @category ifconfig
- * @param {string} [interface] The network interface.
- * @param {function} callback The callback function.
- * @example
- *
- * var ifconfig = require('wireless-tools/ifconfig');
- *
- * ifconfig.status(function(err, status) {
- *   console.log(status);
- * });
- *
- * // =>
- * [
- *   {
- *     interface: 'eth0',
- *     link: 'ethernet',
- *     address: 'b8:27:eb:da:52:ad',
- *     ipv4_address: '192.168.1.2',
- *     ipv4_broadcast: '192.168.1.255',
- *     ipv4_subnet_mask: '255.255.255.0',
- *     up: true,
- *     broadcast: true,
- *     running: true,
- *     multicast: true
- *   },
- *   {
- *     interface: 'lo',
- *     link: 'local',
- *     ipv4_address: '127.0.0.1',
- *     ipv4_subnet_mask: '255.0.0.0',
- *     up: true,
- *     running: true,
- *     loopback: true
- *   },
- *   {
- *     interface: 'wlan0',
- *     link: 'ethernet',
- *     address: '00:0b:81:95:12:21',
- *     ipv4_address: '192.168.10.1',
- *     ipv4_broadcast: '192.168.10.255',
- *     ipv4_subnet_mask: '255.255.255.0',
- *     up: true,
- *     broadcast: true,
- *     multicast: true
- *   }
- * ]
- *
+ * @param {string} [nic] The NIC
+ * @param {function} callback The callback function
  */
-function status(interface, callback) {
+function status(nic, callback) {
 	if (callback) {
-		this.exec('ifconfig ' + interface, parse_status_interface(callback));
+		this.exec('ifconfig ' + nic, parse_status_nic(callback));
+		return;
 	}
-	else {
-		this.exec('ifconfig -a', parse_status(interface));
-	}
+
+	this.exec('ifconfig -a', parse_status(nic));
 }
 
 /**
- * The **ifconfig down** command is used to take down an interface that is up.
+ * The **ifconfig down** command is used to take down a NIC that is up
  *
  * @static
  * @category ifconfig
- * @param {string} interface The network interface.
- * @param {function} callback The callback function.
- * @returns {process} The child process.
- * @example
- *
- * var ifconfig = require('wireless-tools/ifconfig');
- *
- * ifconfig.down('wlan0', function(err) {
- *   // the interface is down
- * });
- *
+ * @param {string} the NIC
+ * @param {function} callback The callback function
+ * @returns {process} The child process
  */
-function down(interface, callback) {
-	return this.exec('ifconfig ' + interface + ' down', callback);
+function down(nic, callback) {
+	return this.exec('ifconfig ' + nic + ' down', callback);
 }
 
 /**
- * The **ifconfig up** command is used to bring up an interface with the
- * specified configuration.
+ * The **ifconfig up** command is used to bring up a NIC with the
+ * specified configuration
  *
  * @static
  * @category ifconfig
- * @param {object} options The interface configuration.
- * @param {function} callback The callback function.
- * @returns {process} The child process.
- * @example
- *
- * var options = {
- *   interface: 'wlan0',
- *   ipv4_address: '192.168.10.1',
- *   ipv4_broadcast: '192.168.10.255',
- *   ipv4_subnet_mask: '255.255.255.0'
- * };
- *
- * ifconfig.up(options, function(err) {
- *   // the interface is up
- * });
- *
+ * @param {object} options The NIC configuration
+ * @param {function} callback The callback function
+ * @returns {process} The child process
  */
 function up(options, callback) {
-	return this.exec('ifconfig ' + options.interface +    ' ' + options.ipv4_address +    ' netmask ' + options.ipv4_subnet_mask +    ' broadcast ' + options.ipv4_broadcast +    ' up', callback);
+	return this.exec('ifconfig ' + options.nic +    ' ' + options.ipv4_address +    ' netmask ' + options.ipv4_subnet_mask +    ' broadcast ' + options.ipv4_broadcast +    ' up', callback);
 }
+
+
+/**
+ * The **ifconfig** command is used to configure NICs
+ *
+ * @static
+ * @category ifconfig
+ */
+module.exports = {
+	exec : child_process.exec,
+	status,
+	down,
+	up,
+};
