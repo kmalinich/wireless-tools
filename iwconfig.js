@@ -23,18 +23,6 @@
 
 const child_process = require('child_process');
 
-/**
- * The **iwconfig** command is used to configure wireless NICs
- *
- * @private
- * @category iwconfig
- *
- */
-module.exports = {
-	exec : child_process.exec,
-	status,
-};
-
 
 // Convert WiFi frequency into channel number
 function freq2channel(freq) {
@@ -91,7 +79,6 @@ function freq2channel(freq) {
  * @category iwconfig
  * @param {string} block The section of stdout for the NIC
  * @returns {object} The parsed wireless NIC status
- *
  */
 function parse_status_block(block) {
 	let match;
@@ -128,7 +115,6 @@ function parse_status_block(block) {
  * @static
  * @category iwconfig
  * @param {function} callback The callback function
- *
  */
 function parse_status(callback) {
 	return function (error, stdout) {
@@ -146,7 +132,6 @@ function parse_status(callback) {
  * @static
  * @category iwconfig
  * @param {function} callback The callback function
- *
  */
 function parse_status_nic(callback) {
 	return function (error, stdout) {
@@ -163,47 +148,21 @@ function parse_status_nic(callback) {
  * @category iwconfig
  * @param {string} [nic] The wireless NIC
  * @param {function} callback The callback function
- * @example
- *
- * const wt = require('wireless-tools');
- *
- * wt.iwconfig.status((error, status) => {
- *   if (error) {
- *     console.error('Error: %o', error);
- *     return;
- *   }
- *
- *   console.log('Status: %o', status);
- * });
- *
- * [
- *   {
- *     nic: 'wlan0',
- *     access_point: '00:0b:81:95:12:21',
- *     frequency: 2.437,
- *     ieee: '802.11bg',
- *     mode: 'master',
- *     noise: 0,
- *     quality: 77,
- *     sensitivity: 0,
- *     signal: 50,
- *     ssid: 'RaspberryPi'
- *   },
- *   {
- *     nic: 'wlan1',
- *     frequency: 2.412,
- *     mode: 'auto',
- *     noise: 0,
- *     quality: 0,
- *     sensitivity: 0,
- *     signal: 0,
- *     unassociated: true
- *   }
- * ]
- *
  */
 function status(nic, callback) {
 	if (callback) return this.exec('iwconfig ' + nic, parse_status_nic(callback));
 
 	return this.exec('iwconfig', parse_status(nic));
 }
+
+
+/**
+ * The **iwconfig** command is used to configure wireless NICs
+ *
+ * @private
+ * @category iwconfig
+ */
+module.exports = {
+	exec : child_process.exec,
+	status,
+};
