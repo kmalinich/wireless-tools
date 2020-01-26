@@ -21,4 +21,4 @@ wt.iwconfig.status((error, status) => {
 	console.log('iwconfig status: %o', status);
 });
 
-console.dir(wt.iwconfig.status())
+console.dir(wt.iwconfig.status('wlan0'));
